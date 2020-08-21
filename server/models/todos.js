@@ -1,9 +1,9 @@
 const {todos} = require('../database/dbSetup')
 
 module.exports = {
-    getTodos: async () => {
+    getTodos: async (order) => {
         try {
-            let results = await todos.find({ done: false })
+            let results = await todos.find({ done: false }).sort({createdDate: order}, function(err, cursor){})
             return results
         } catch (error) {
             console.log(error)

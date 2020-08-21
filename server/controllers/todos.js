@@ -2,7 +2,12 @@ const model = require('../models/todos.js')
 
 module.exports = {
     getTodos: async (req, res) => {
-        let results = await model.getTodos()
+        let order = 1
+        if (req.params.order == 'desc') {
+            order = -1
+        }
+        
+        let results = await model.getTodos(order)
 
         if (results) {
             res.status(200).json(results)
@@ -35,8 +40,12 @@ module.exports = {
             ) {
             let todo = {
                 title: req.body.title,
-                done: false
+                done: false,
+                createdDate: new Date(),
+                updatedDate: null,
+                completedDate: null
             }
+            
 
             let success = await model.postTodo(todo)
 
@@ -54,7 +63,8 @@ module.exports = {
             typeof req.body.title === 'string'
             ) {
             let todo = {
-                title: req.body.title
+                title: req.body.title,
+                updatedDate: new Date()
             }
 
             let updatedTodos = await model.editTodo(req.params.id, todo)

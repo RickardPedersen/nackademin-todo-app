@@ -3,9 +3,9 @@ import axios from 'axios'
 const url = 'http://localhost:7070/api/todos'
 
 class TodoRequests {
-    static async getAllTodos() {
+    static async getAllTodos(order) {
         try {
-            const res = await axios.get(`${url}/get`)
+            const res = await axios.get(`${url}/get/${order}`)
             //console.log(res)
             const data = res.data
             return data

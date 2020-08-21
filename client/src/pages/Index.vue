@@ -1,9 +1,22 @@
 <template>
   <q-page class="column content-center">
+    <div>
+      <q-btn color="primary" @click="sortByCreated">
+        Sort by created
+      </q-btn>
+      <q-btn color="primary">
+        Sort by updated
+      </q-btn>
+      <q-btn color="primary">
+        Sort by...
+      </q-btn>
+    </div>
     <TodoItem
       v-for="(item, index) in todos" v-bind:key="index"
       :title="item.title"
       :todoId="item._id"
+      :createdDate="item.createdDate"
+      :updatedDate="item.updatedDate"
     />
   </q-page>
 </template>
@@ -15,7 +28,8 @@ export default {
   name: 'PageIndex',
   data() {
     return {
-      todos: []
+      todos: [],
+      createdOrder: 'asc'
     }
   },
   components: {
@@ -28,8 +42,20 @@ export default {
       this.todos = await TodoRequests.getAllTodos()
       console.log(this.todos)
     })
-    this.todos = await TodoRequests.getAllTodos()
+    this.todos = await TodoRequests.getAllTodos('asc')
     console.log(this.todos)
+  },
+  methods: {
+    async sortByCreated() {
+      this.todos = []
+      this.todos = await TodoRequests.getAllTodos(this.createdOrder)
+
+      if (this.createdOrder === 'asc') {
+        this.createdOrder = 'desc'
+      } else {
+        this.createdOrder = 'asc'
+      }
+    }
   }
 }
 </script>

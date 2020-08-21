@@ -3,7 +3,7 @@ const {Router} = require('express')
 
 const router = new Router()
 
-router.get('/get', controller.getTodos)
+router.get('/get/:order', controller.getTodos)
 router.get('/get/done', controller.getDoneTodos)
 router.get('/getOne/:id', controller.getTodo)
 router.post('/post', controller.postTodo)

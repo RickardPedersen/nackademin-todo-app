@@ -6,7 +6,8 @@
     >
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
-          <!--<div class="text-overline">Overline</div>-->
+          <div class="text-overline">Created: {{ createdAt }}</div>
+          <div v-show="updatedAt !== null" class="text-overline">Edited: {{ updatedAt }}</div>
           <div class="flex text-h5 q-mt-sm q-mb-xs">
             <div v-show="!editMode">
               {{dataTitle}}
@@ -72,12 +73,17 @@ export default {
     return {
       editMode: false,
       newTitle: '',
-      dataTitle: this.title
+      dataTitle: this.title,
+      createdAt: null,
+      updatedAt: null
     }
   },
   props: {
     title: String,
-    todoId: String
+    todoId: String,
+    createdDate: String,
+    updatedDate: String 
+
   },
   methods: {
     async deleteTodo() {
@@ -115,7 +121,16 @@ export default {
       this.editMode = false
     }
   },
-  created() {
+  mounted() {
+    let ca = new Date(this.createdDate).toLocaleString()
+    this.createdAt = ca
+
+      console.log('HEJ')
+    if (this.updatedDate !== null) {
+      let ua = new Date(this.updatedDate).toLocaleString()
+      this.updatedAt = ua
+    }
+    //console.log(this.createdAt.toLocaleDateString())
     this.newTitle = this.title
   }
 }
