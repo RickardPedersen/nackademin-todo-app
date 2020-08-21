@@ -1,9 +1,37 @@
 const {todos} = require('../database/dbSetup')
 
 module.exports = {
-    getTodos: async (order) => {
+    countTodos: async () => {
+        return await todos.count({ done: false })
+    },
+    getTodos: async (order, skip, limit, sortBy) => {
         try {
-            let results = await todos.find({ done: false }).sort({createdDate: order}, function(err, cursor){})
+            let sortObj = {}
+            if (sortBy === 'title') {
+                sortObj = {
+                    title: order
+                }
+            } else if (sortBy === 'createdDate') {
+                sortObj = {
+                    createdDate: order
+                }
+            } else if (sortBy === 'updatedDate') {
+                sortObj = {
+                    updatedDate: order
+                }
+            } else {
+                sortObj = {
+                    title: order
+                }
+            }
+            console.log(sortObj)
+
+            let results = await todos.find({ done: false })
+            .sort(sortObj)
+            .skip(parseInt(skip))
+            .limit(parseInt(limit))
+            //console.log(results)
+            console.log(limit)
             return results
         } catch (error) {
             console.log(error)

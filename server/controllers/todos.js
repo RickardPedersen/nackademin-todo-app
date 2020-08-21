@@ -1,13 +1,19 @@
 const model = require('../models/todos.js')
 
 module.exports = {
+    countTodos: async (req, res) => {
+        let result = await model.countTodos()
+        console.log(result)
+        res.json(result)
+    },
     getTodos: async (req, res) => {
         let order = 1
-        if (req.params.order == 'desc') {
+        if (req.params.order === 'true') {
             order = -1
         }
-        
-        let results = await model.getTodos(order)
+
+
+        let results = await model.getTodos(order, req.params.skip, req.params.limit, req.params.sortBy)
 
         if (results) {
             res.status(200).json(results)
@@ -42,8 +48,8 @@ module.exports = {
                 title: req.body.title,
                 done: false,
                 createdDate: new Date(),
-                updatedDate: null,
-                completedDate: null
+                updatedDate: new Date(),
+                dueDate: new Date()
             }
             
 

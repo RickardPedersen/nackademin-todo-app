@@ -3,9 +3,21 @@ import axios from 'axios'
 const url = 'http://localhost:7070/api/todos'
 
 class TodoRequests {
-    static async getAllTodos(order) {
+    static async countTodos() {
         try {
-            const res = await axios.get(`${url}/get/${order}`)
+            const res = await axios.get(`${url}/count`)
+            //console.log(res)
+            const data = res.data
+            return data
+        } catch (error) {
+            console.log(error)
+            return error
+        }
+    }
+
+    static async getAllTodos(order, skip, limit, sortBy) {
+        try {
+            const res = await axios.get(`${url}/get/${order}/${skip}/${limit}/${sortBy}`)
             //console.log(res)
             const data = res.data
             return data
