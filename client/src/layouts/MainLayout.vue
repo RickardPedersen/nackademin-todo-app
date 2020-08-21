@@ -55,10 +55,16 @@ const linksData = [
     link: '/'
   },
   {
-    title: 'Create todo',
+    title: 'Add Todo',
     caption: '',
     icon: '',
     link: 'create'
+  },
+  {
+    title: 'Todo Archive',
+    caption: '',
+    icon: '',
+    link: 'archive'
   }
 ];
 

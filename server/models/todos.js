@@ -3,7 +3,16 @@ const {todos} = require('../database/dbSetup')
 module.exports = {
     getTodos: async () => {
         try {
-            let results = await todos.find({})
+            let results = await todos.find({ done: false })
+            return results
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    },
+    getDoneTodos: async () => {
+        try {
+            let results = await todos.find({ done: true })
             return results
         } catch (error) {
             console.log(error)
@@ -12,7 +21,7 @@ module.exports = {
     },
     getTodo: async (id) => {
         try {
-            let result = await todos.findOne({ _id: id})
+            let result = await todos.findOne({ _id: id })
             return result
         } catch (error) {
             console.log(error)

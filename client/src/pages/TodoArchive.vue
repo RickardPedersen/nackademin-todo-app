@@ -1,6 +1,6 @@
 <template>
   <q-page class="column content-center">
-    <TodoItem
+    <DoneTodo
       v-for="(item, index) in todos" v-bind:key="index"
       :title="item.title"
       :todoId="item._id"
@@ -10,25 +10,25 @@
 
 <script>
 import TodoRequests from '../todoRequests'
-import TodoItem from '../components/TodoItem'
+import DoneTodo from '../components/DoneTodo'
 export default {
-  name: 'PageIndex',
+  name: 'TodoArchive',
   data() {
     return {
       todos: []
     }
   },
   components: {
-    TodoItem
+    DoneTodo
   },
   async created() {
     this.$root.$on('reload', async () => {
       console.log('RELOAD')
       this.todos = []
-      this.todos = await TodoRequests.getAllTodos()
+      this.todos = await TodoRequests.getDoneTodos()
       console.log(this.todos)
     })
-    this.todos = await TodoRequests.getAllTodos()
+    this.todos = await TodoRequests.getDoneTodos()
     console.log(this.todos)
   }
 }

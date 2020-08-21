@@ -6,7 +6,19 @@ class TodoRequests {
     static async getAllTodos() {
         try {
             const res = await axios.get(`${url}/get`)
-            console.log(res)
+            //console.log(res)
+            const data = res.data
+            return data
+        } catch (error) {
+            console.log(error)
+            return error
+        }
+    }
+
+    static async getDoneTodos() {
+        try {
+            const res = await axios.get(`${url}/get/done`)
+            //console.log(res)
             const data = res.data
             return data
         } catch (error) {
@@ -29,6 +41,17 @@ class TodoRequests {
     static async editTodo(postData, id) {
         try {
             const res = await axios.put(`${url}/edit/${id}`, postData)
+            const data = res.data
+            return data
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
+
+    static async doneTodo(postData, id) {
+        try {
+            const res = await axios.put(`${url}/done/${id}`, postData)
             const data = res.data
             return data
         } catch (error) {

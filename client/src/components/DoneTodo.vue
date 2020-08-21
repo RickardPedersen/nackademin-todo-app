@@ -55,7 +55,7 @@
         </q-btn>
         <q-space />
         <q-btn flat color="positive" @click="doneTodo">
-          DONE
+          NOT DONE
         </q-btn>
         <q-btn flat color="negative" @click="deleteTodo">
           DELETE
@@ -91,7 +91,7 @@ export default {
     async doneTodo() {
       console.log('DONE ' + this.todoId)
         let editedTodo = {
-          done: true
+          done: false
         }
       await TodoRequests.doneTodo(editedTodo, this.todoId).then(()=> {
         

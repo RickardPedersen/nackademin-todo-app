@@ -10,6 +10,15 @@ module.exports = {
             res.status(500).send('Internal Server Error')
         }
     },
+    getDoneTodos: async (req, res) => {
+        let results = await model.getDoneTodos()
+
+        if (results) {
+            res.status(200).json(results)
+        } else {
+            res.status(500).send('Internal Server Error')
+        }
+    },
     getTodo: async (req, res) => {
         let result = await model.getTodo(req.params.id)
 
