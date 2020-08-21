@@ -49,10 +49,16 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksData = [
   {
+    title: 'Home',
+    caption: '',
+    icon: 'home',
+    link: '/'
+  },
+  {
     title: 'Create todo',
     caption: '',
     icon: '',
-    link: ''
+    link: 'create'
   }
 ];
 

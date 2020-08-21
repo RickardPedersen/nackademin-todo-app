@@ -1,39 +1,16 @@
 <template>
   <q-page class="column content-center">
-    <q-card
-      class="my-card q-mb-lg q-mt-lg"
-      flat
-      bordered
-      v-for="(post, index) in todos" v-bind:key="index"
-    >
-      <q-card-section horizontal>
-        <q-card-section class="q-pt-xs">
-          <!--<div class="text-overline">Overline</div>-->
-          <div class="text-h5 q-mt-sm q-mb-xs">{{post.title}}</div>
-          <div class="text-caption text-grey">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </div>
-        </q-card-section>
-      </q-card-section>
-
-      <q-separator />
-
-      <q-card-actions>
-        <q-btn flat round icon="event" />
-        <q-btn flat>
-          7:30PM
-        </q-btn>
-        <q-btn flat color="primary">
-          DONE
-        </q-btn>
-      </q-card-actions>
-    </q-card>
-    
+    <TodoItem
+      v-for="(item, index) in todos" v-bind:key="index"
+      :title="item.title"
+      :todoId="item._id"
+    />
   </q-page>
 </template>
 
 <script>
 import TodoRequests from '../todoRequests'
+import TodoItem from '../components/TodoItem'
 export default {
   name: 'PageIndex',
   data() {
@@ -41,9 +18,19 @@ export default {
       todos: []
     }
   },
+  components: {
+    TodoItem
+  },
   async created() {
     this.todos = await TodoRequests.getAllTodos()
     console.log(this.todos)
+  },
+  async mounted() {
+            this.$root.$on('reloadasdasdas', async () => {
+              console.log('PARENT ASDASD')
+              this.todos = await TodoRequests.getAllTodos()
+            })
+
   }
 }
 </script>
