@@ -3,9 +3,9 @@ import axios from 'axios'
 const url = 'http://localhost:7070/api/todos'
 
 class TodoRequests {
-    static async countTodos() {
+    static async countTodos(filter) {
         try {
-            const res = await axios.get(`${url}/count`)
+            const res = await axios.get(`${url}/count/${filter}`)
             //console.log(res)
             const data = res.data
             return data
@@ -15,9 +15,9 @@ class TodoRequests {
         }
     }
 
-    static async getAllTodos(order, skip, limit, sortBy) {
+    static async getAllTodos(order, skip, limit, sortBy, filter) {
         try {
-            const res = await axios.get(`${url}/get/${order}/${skip}/${limit}/${sortBy}`)
+            const res = await axios.get(`${url}/get/${order}/${skip}/${limit}/${sortBy}/${filter}`)
             //console.log(res)
             const data = res.data
             return data

@@ -2,7 +2,7 @@ const model = require('../models/todos.js')
 
 module.exports = {
     countTodos: async (req, res) => {
-        let result = await model.countTodos()
+        let result = await model.countTodos(req.params.filter)
         console.log(result)
         res.json(result)
     },
@@ -13,7 +13,7 @@ module.exports = {
         }
 
 
-        let results = await model.getTodos(order, req.params.skip, req.params.limit, req.params.sortBy)
+        let results = await model.getTodos(order, req.params.skip, req.params.limit, req.params.sortBy, req.params.filter)
 
         if (results) {
             res.status(200).json(results)

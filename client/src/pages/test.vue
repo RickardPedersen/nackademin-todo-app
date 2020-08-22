@@ -120,6 +120,7 @@ export default {
 			const filter = props.filter
 			console.log(sortBy)
 			console.log(descending)
+			console.log(filter)
 
       this.loading = true
 
@@ -135,7 +136,7 @@ export default {
 
       // fetch data from server
 			// filter
-      const returnedData = await this.fetchFromServer(descending, page, fetchCount, sortBy)
+      const returnedData = await this.fetchFromServer(descending, page, fetchCount, sortBy, filter)
 
       // clear out existing data and add new
       this.todos.splice(0, this.todos.length, ...returnedData)
@@ -148,17 +149,17 @@ export default {
       this.loading = false
 		},
 
-    async fetchFromServer (order, page, limit, sortBy) {
+    async fetchFromServer (order, page, limit, sortBy, filter) {
 			let skip = 0
 
 			skip = (page - 1) * limit
 			console.log(limit)
-			return await TodoRequests.getAllTodos(order, skip, limit, sortBy)
+			return await TodoRequests.getAllTodos(order, skip, limit, sortBy, filter)
     },
 
     async getRowsNumberCount (filter) {
       let count = 0
-			count = await TodoRequests.countTodos()
+			count = await TodoRequests.countTodos(filter)
 			console.log('COUNTED')
 			console.log(count)
       return count
@@ -216,7 +217,7 @@ export default {
     // get initial data from server (1st page)
     this.onRequest({
       pagination: this.pagination,
-      filter: undefined
+      filter: this.filter
     })
   },/*
 	async created() {

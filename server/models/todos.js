@@ -1,10 +1,17 @@
 const {todos} = require('../database/dbSetup')
 
 module.exports = {
-    countTodos: async () => {
-        return await todos.count({})
+    countTodos: async (filter) => {
+
+        if (filter) {
+            return await todos.count({ title: new RegExp(filter, 'i') })
+            
+        } else {
+            return await todos.count({})
+
+        }
     },
-    getTodos: async (order, skip, limit, sortBy) => {
+    getTodos: async (order, skip, limit, sortBy, filter) => {
         try {
             let sortObj = {}
             if (sortBy === 'title') {
@@ -26,13 +33,25 @@ module.exports = {
             }
             console.log(sortObj)
 
-            let results = await todos.find({})
-            .sort(sortObj)
-            .skip(parseInt(skip))
-            .limit(parseInt(limit))
-            //console.log(results)
-            console.log(limit)
-            return results
+            if (filter) {
+                let results = await todos.find( { title: new RegExp(filter, 'i') } )
+                .sort(sortObj)
+                .skip(parseInt(skip))
+                .limit(parseInt(limit))
+                //console.log(results)
+                console.log(limit)
+                return results
+            } else {
+                let results = await todos.find( {} )
+                .sort(sortObj)
+                .skip(parseInt(skip))
+                .limit(parseInt(limit))
+                //console.log(results)
+                console.log(limit)
+                return results
+    
+            }
+
         } catch (error) {
             console.log(error)
             return false
