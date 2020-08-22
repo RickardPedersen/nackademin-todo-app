@@ -1,14 +1,18 @@
 <template>
   <div class="q-pa-md">
+    <!--
+      :selected-rows-label="getSelectedString"
+      selection="single"
+      :selected.sync="selected"
+    -->
     <q-table
       title="Todos"
       :data="todos"
       :columns="columns"
       row-key="_id"
       binary-state-sort
-      :selected-rows-label="getSelectedString"
-      selection="single"
-      :selected.sync="selected"
+      
+      
 			:pagination.sync="pagination"
 			:loading="loading"
 			:filter="filter"
@@ -36,12 +40,17 @@
       <template v-slot:body="props">
         <q-tr :props="props">
         	<q-td>
-						<q-checkbox color="gray" v-model="props.selected" />
+						<q-checkbox color="gray" v-model="props.row.done" @input="doneTodo(props.row._id, props.row.done)" />
           </q-td>
 
           <q-td key="title" :props="props">
             {{ props.row.title }}
-            <q-popup-edit v-model="props.row.title" title="Update Title" buttons>
+            <q-popup-edit
+              v-model="props.row.title"
+              title="Update Title"
+              buttons
+              @save="updateTodo(props.row._id, props.row.title)"
+            >
               <q-input v-model="props.row.title" dense autofocus counter />
             </q-popup-edit>
           </q-td>
@@ -58,7 +67,7 @@
           </q-td>
 
           <q-td key="updatedDate" :props="props">
-            {{ new Date(props.row.updatedDate).toLocaleDateString() }}
+            {{ new Date(props.row.updatedDate).toLocaleTimeString() }}
           </q-td>
 
           <q-td key="delete" :props="props">
@@ -171,9 +180,26 @@ export default {
       console.log('DELETE')
       console.log(id)
       await this.onRequest({
-      pagination: this.pagination,
-      filter: this.filter
-    })
+        pagination: this.pagination,
+        filter: this.filter
+      })
+    },
+    async updateTodo(id, val) {
+      let editedTodo = {
+        title: val
+      }
+      await TodoRequests.editTodo(editedTodo, id)
+      console.log(id)
+      console.log(val)
+      await this.onRequest({
+        pagination: this.pagination,
+        filter: this.filter
+      })
+      return true
+    },
+    async doneTodo(id, val) {
+      console.log(id)
+      console.log(val)
     }
 	},
 	mounted () {
