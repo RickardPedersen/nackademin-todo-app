@@ -21,6 +21,17 @@
           </template>
         </q-input>
     </template>
+    <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+          >
+            {{ col.label }}
+          </q-th>
+        </q-tr>
+      </template>
 
       <template v-slot:body="props">
         <q-tr :props="props">
@@ -49,6 +60,10 @@
           <q-td key="updatedDate" :props="props">
             {{ new Date(props.row.updatedDate).toLocaleDateString() }}
           </q-td>
+
+          <q-td key="delete" :props="props">
+            <q-btn round color="negative" icon="delete" @click="deleteTodo(props.row._id)" />
+          </q-td>
         </q-tr>
       </template>
     </q-table>
@@ -73,6 +88,7 @@ export default {
 			todos: [],
     	selected: [],
       columns: [
+        { name: 'done', label: 'Done', field: 'done', align: 'left' },
         {
           name: 'title',
           required: true,
@@ -84,7 +100,8 @@ export default {
         },
         /*{ name: 'dueDate', align: 'center', label: 'Due Date', field: 'dueDate', sortable: true },*/
         { name: 'createdDate', label: 'Created', field: 'createdDate', sortable: true, style: 'width: 10px' },
-        { name: 'updatedDate', label: 'Updated', field: 'updatedDate', sortable: true, }
+        { name: 'updatedDate', label: 'Updated', field: 'updatedDate', sortable: true, },
+        { name: 'delete', label: 'Delete', field: 'delete' }
       ]
     }
   },
@@ -147,6 +164,16 @@ export default {
 			//console.log(newTodoList)
 			//this.todos = newTodoList
       return this.selected.length === 0 ? '' : `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.todos.length}`
+    },
+
+    async deleteTodo(id) {
+      await TodoRequests.deleteTodo(id)
+      console.log('DELETE')
+      console.log(id)
+      await this.onRequest({
+      pagination: this.pagination,
+      filter: this.filter
+    })
     }
 	},
 	mounted () {
@@ -163,11 +190,12 @@ export default {
 	watch: {
 		selected: async function (test)  {
 
-			console.log('WATCH')
+      console.log('WATCH')
+      /*
 			if (test[0]) {
 				await TodoRequests.deleteTodo(test[0]._id)
 				this.todos = await TodoRequests.getAllTodos('asc')
-			}
+			}*/
 
 			console.log(test[0])
 			//console.log(test[0]._id)
