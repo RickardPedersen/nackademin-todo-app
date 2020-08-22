@@ -2,7 +2,7 @@ const {todos} = require('../database/dbSetup')
 
 module.exports = {
     countTodos: async () => {
-        return await todos.count({ done: false })
+        return await todos.count({})
     },
     getTodos: async (order, skip, limit, sortBy) => {
         try {
@@ -26,7 +26,7 @@ module.exports = {
             }
             console.log(sortObj)
 
-            let results = await todos.find({ done: false })
+            let results = await todos.find({})
             .sort(sortObj)
             .skip(parseInt(skip))
             .limit(parseInt(limit))

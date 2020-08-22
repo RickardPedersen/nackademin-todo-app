@@ -200,6 +200,16 @@ export default {
     async doneTodo(id, val) {
       console.log(id)
       console.log(val)
+
+      let editedTodo = {
+        done: val
+      }
+      await TodoRequests.doneTodo(editedTodo, id)
+
+      await this.onRequest({
+        pagination: this.pagination,
+        filter: this.filter
+      })
     }
 	},
 	mounted () {
