@@ -19,12 +19,29 @@
 			@request="onRequest"
     >
 		<template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input  dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
     </template>
+
+    <template v-slot:top-left>
+      <div class="q-table__title">Todos</div>
+      <q-form @submit="submitTodo">
+        <q-input
+        ref="addInput"
+          debounce="300"
+          v-model="newTitle"
+          label="Add new todo"
+          lazy-rules="ondemand"
+          :rules="[ createRules ]"
+        >
+            <q-btn  dense flat icon="add" type="submit" />
+        </q-input>
+      </q-form>
+    </template>
+
     <template v-slot:header="props">
         <q-tr :props="props">
           <q-th
@@ -85,6 +102,7 @@ import TodoRequests from '../todoRequests'
 export default {
   data () {
     return {
+      newTitle: '',
 			filter: '',
       loading: false,
       pagination: {
@@ -135,7 +153,7 @@ export default {
       const startRow = (page - 1) * rowsPerPage
 
       // fetch data from server
-			// filter
+
       const returnedData = await this.fetchFromServer(descending, page, fetchCount, sortBy, filter)
 
       // clear out existing data and add new
@@ -211,6 +229,31 @@ export default {
         pagination: this.pagination,
         filter: this.filter
       })
+    },
+    async submitTodo() {
+      let validated = await this.createRules(this.newTitle)
+      console.log('SUBMIT: '+validated)
+
+      if (validated) {
+        let todo = {
+          title: this.newTitle
+        }
+
+        await TodoRequests.createTodo(todo)
+        this.newTitle = ''
+        this.$refs.addInput.blur()
+        this.$refs.addInput.resetValidation()
+
+        await this.onRequest({
+          pagination: this.pagination,
+          filter: this.filter
+        })
+      }
+    },
+    async createRules(val) {
+      return new Promise((resolve, reject) => {
+        resolve(!!val || 'Please type something')
+      })
     }
 	},
 	mounted () {
@@ -219,24 +262,6 @@ export default {
       pagination: this.pagination,
       filter: this.filter
     })
-  },/*
-	async created() {
-    this.todos = await TodoRequests.getAllTodos('asc')
-    console.log(this.todos)
-	},*/
-	watch: {
-		selected: async function (test)  {
-
-      console.log('WATCH')
-      /*
-			if (test[0]) {
-				await TodoRequests.deleteTodo(test[0]._id)
-				this.todos = await TodoRequests.getAllTodos('asc')
-			}*/
-
-			console.log(test[0])
-			//console.log(test[0]._id)
-		}
-	}
+  }
 }
 </script>

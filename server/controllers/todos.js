@@ -1,19 +1,42 @@
 const model = require('../models/todos.js')
 
+function getOrder(order) {
+    return order === 'true' ? -1 : 1
+}
+
+function getFilter(filter) {
+    return filter ? { title: new RegExp(filter, 'i') } : {}
+}
+
+function getSort(sortBy, order) {
+    switch (sortBy) {
+        case 'title':
+            return { title: order }
+
+        case 'createdAt':
+            return { createdAt: order }
+
+        case 'updatedAt':
+            return { updatedAt: order }
+
+        default:
+            return { title: order }
+    }
+}
+
 module.exports = {
     countTodos: async (req, res) => {
-        let result = await model.countTodos(req.params.filter)
-        console.log(result)
-        res.json(result)
+        let filter = getFilter(req.params.filter)
+        let result = await model.countTodos(filter)
+
+        res.status(200).json(result)
     },
     getTodos: async (req, res) => {
-        let order = 1
-        if (req.params.order === 'true') {
-            order = -1
-        }
+        let order = getOrder(req.params.order)
+        let filter = getFilter(req.params.filter)
+        let sortBy = getSort(req.params.sortBy, order)
 
-
-        let results = await model.getTodos(order, req.params.skip, req.params.limit, req.params.sortBy, req.params.filter)
+        let results = await model.getTodos(sortBy, req.params.skip, req.params.limit, filter)
 
         if (results) {
             res.status(200).json(results)
@@ -40,15 +63,11 @@ module.exports = {
         }
     },
     postTodo: async (req, res) => {
-
-        if (req.body.hasOwnProperty('title') &&
-            typeof req.body.title === 'string'
-            ) {
+        if (req.body.hasOwnProperty('title')) {
             let todo = {
                 title: req.body.title,
                 done: false
             }
-            
 
             let success = await model.postTodo(todo)
 
@@ -62,18 +81,16 @@ module.exports = {
         }
     },
     editTodo: async (req, res) => {
-        if (req.body.hasOwnProperty('title') &&
-            typeof req.body.title === 'string'
-            ) {
+        if (req.body.hasOwnProperty('title')) {
             let todo = {
                 title: req.body.title
             }
-
-            let updatedTodos = await model.editTodo(req.params.id, todo)
-
-            if (updatedTodos === 0) {
+    
+            let updatedNum = await model.editTodo(req.params.id, todo)
+    
+            if (updatedNum === 0) {
                 res.status(404).send('Not Found')
-            } else if (updatedTodos === 1) {
+            } else if (updatedNum === 1) {
                 res.status(200).send('OK')
             } else {
                 res.status(500).send('Something went wrong')
@@ -83,9 +100,7 @@ module.exports = {
         }
     },
     doneTodo: async (req, res) => {
-        if (req.body.hasOwnProperty('done') &&
-            typeof req.body.done === 'boolean'
-            ) {
+        if (req.body.hasOwnProperty('done')) {
             let todo = {
                 done: req.body.done
             }
@@ -100,16 +115,15 @@ module.exports = {
                 res.status(500).send('Something went wrong')
             }
         } else {
-            console.log(typeof req.body.title)
             res.status(400).send('Bad Request')
         }
     },
     deleteTodo: async (req, res) => {
-        let deletedPosts = await model.deleteTodo(req.params.id)
+        let deletedNum = await model.deleteTodo(req.params.id)
 
-        if (deletedPosts === 0) {
+        if (deletedNum === 0) {
             res.status(404).send('Not Found')
-        } else if (deletedPosts === 1) {
+        } else if (deletedNum === 1) {
             res.status(200).send('OK')
         } else {
             res.status(500).send('Internal Server Error')
