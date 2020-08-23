@@ -31,23 +31,25 @@ module.exports = {
                     title: order
                 }
             }
-            console.log(sortObj)
+            //console.log(sortObj)
 
             if (filter) {
                 let results = await todos.find( { title: new RegExp(filter, 'i') } )
+                .collation({ locale: "sv" })
                 .sort(sortObj)
                 .skip(parseInt(skip))
                 .limit(parseInt(limit))
                 //console.log(results)
-                console.log(limit)
+                //console.log(limit)
                 return results
             } else {
                 let results = await todos.find( {} )
+                .collation({ locale: "sv" })
                 .sort(sortObj)
                 .skip(parseInt(skip))
                 .limit(parseInt(limit))
                 //console.log(results)
-                console.log(limit)
+                //console.log(limit)
                 return results
     
             }
@@ -77,7 +79,7 @@ module.exports = {
     },
     postTodo: async (todo) => {
         try {
-            await todos.insert(todo)
+            await todos.create(todo)
 
             return true
         } catch (error) {
@@ -105,7 +107,7 @@ module.exports = {
     },
     deleteTodo: async (id) => {
         try {
-            let result = await todos.remove({ _id: id})
+            let result = await todos.deleteOne({ _id: id})
             return result
         } catch (error) {
             console.log(error)

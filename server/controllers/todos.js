@@ -46,10 +46,7 @@ module.exports = {
             ) {
             let todo = {
                 title: req.body.title,
-                done: false,
-                createdDate: new Date(),
-                updatedDate: new Date(),
-                dueDate: new Date()
+                done: false
             }
             
 
@@ -69,8 +66,7 @@ module.exports = {
             typeof req.body.title === 'string'
             ) {
             let todo = {
-                title: req.body.title,
-                updatedDate: new Date()
+                title: req.body.title
             }
 
             let updatedTodos = await model.editTodo(req.params.id, todo)

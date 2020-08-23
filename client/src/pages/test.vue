@@ -62,12 +62,12 @@
             </q-popup-edit>
           </q-td>-->
 
-          <q-td key="createdDate" :props="props">
-            <div class="text-pre-wrap">{{ new Date(props.row.createdDate).toLocaleTimeString() }}</div>
+          <q-td key="createdAt" :props="props">
+            <div class="text-pre-wrap">{{ new Date(props.row.createdAt).toLocaleTimeString() }}</div>
           </q-td>
 
-          <q-td key="updatedDate" :props="props">
-            {{ new Date(props.row.updatedDate).toLocaleTimeString() }}
+          <q-td key="updatedAt" :props="props">
+            {{ new Date(props.row.updatedAt).toLocaleTimeString() }}
           </q-td>
 
           <q-td key="delete" :props="props">
@@ -108,8 +108,8 @@ export default {
           sortable: true
         },
         /*{ name: 'dueDate', align: 'center', label: 'Due Date', field: 'dueDate', sortable: true },*/
-        { name: 'createdDate', label: 'Created', field: 'createdDate', sortable: true, style: 'width: 10px' },
-        { name: 'updatedDate', label: 'Updated', field: 'updatedDate', sortable: true, },
+        { name: 'createdAt', label: 'Created', field: 'createdAt', sortable: true, style: 'width: 10px' },
+        { name: 'updatedAt', label: 'Updated', field: 'updatedAt', sortable: true, },
         { name: 'delete', label: 'Delete', field: 'delete' }
       ]
     }
