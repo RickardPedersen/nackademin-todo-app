@@ -7,6 +7,23 @@ db.once('open', function() {
   console.log('Connected to db')
 });
 
+const userSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        required: true
+    }
+  },
+  { timestamps: true }
+)
+
 const todoSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -15,14 +32,19 @@ const todoSchema = new mongoose.Schema({
     done: {
         type: Boolean,
         required: true
+    },
+    userId: {
+        type: String,
+        required: true
     }
   },
   { timestamps: true }
 )
 
+const user = mongoose.model('user', userSchema)
 const todos = mongoose.model('todos', todoSchema)
 
-module.exports = {todos}
+module.exports = {user, todos}
 
 /*
 const Datastore = require('nedb-promises')

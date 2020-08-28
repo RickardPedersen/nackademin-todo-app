@@ -23,15 +23,6 @@ module.exports = {
             return false
         }
     },
-    getDoneTodos: async () => {
-        try {
-            let results = await todos.find({ done: true })
-            return results
-        } catch (error) {
-            console.log(error)
-            return false
-        }
-    },
     getTodo: async (id) => {
         try {
             let result = await todos.findOne({ _id: id })
@@ -51,15 +42,6 @@ module.exports = {
         }
     },
     editTodo: async (id, updatedTodo) => {
-        try {
-            let result = await todos.updateOne({ _id: id }, { $set: updatedTodo })
-            return result.n
-        } catch (error) {
-            console.log(error)
-            return false
-        }
-    },
-    doneTodo: async (id, updatedTodo) => {
         try {
             let result = await todos.updateOne({ _id: id }, { $set: updatedTodo })
             return result.n
