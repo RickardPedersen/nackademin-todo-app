@@ -13,11 +13,10 @@ module.exports = {
         if (results) {
             res.status(200).json(results)
         } else {
-            res.status(404).send('Not Found')
+            res.sendStatus(404)
         } 
     },
     getUser: async (req, res) => {
-
         let user = await model.getUser({ _id: req.params.id })
 
         if (user) {
@@ -25,7 +24,7 @@ module.exports = {
             console.log(user)
             res.status(200).json(user)
         } else {
-            res.status(404).send('Not Found')
+            res.sendStatus(404)
         } 
     },
     getUserTodos: async (req, res) => { // ska redigeras
@@ -34,7 +33,7 @@ module.exports = {
         if (posts) {
             res.status(200).json(posts)
         } else {
-            res.status(404).send('Not Found')
+            res.sendStatus(404)
         }
     },
     addUser: async (req, res) => {
@@ -63,9 +62,9 @@ module.exports = {
         let success = await model.addUser(user)
 
         if (success) {
-            res.status(201).send('Created')
+            res.sendStatus(201)
         } else {
-            res.status(500).send('Something went wrong')
+            res.sendStatus(500)
         }
     },
     editUser: async (req, res) => {
@@ -94,11 +93,11 @@ module.exports = {
         let updUser = await model.editUser(req.params.id, updatedUser)
 
         if (updUser === 0) {
-            res.status(404).send('Not Found')
+            res.sendStatus(404)
         } else if (updUser === 1) {
-            res.status(200).send('OK')
+            res.sendStatus(200)
         } else {
-            res.status(500).send('Something went wrong')
+            res.sendStatus(500)
         }
     },
     deleteUser: async (req, res) => {
@@ -110,11 +109,11 @@ module.exports = {
         let delPost = await model.deleteUser(req.params.id)
 
         if (delPost === 0) {
-            res.status(404).send('Not Found')
+            res.sendStatus(404)
         } else if (delPost === 1) {
-            res.status(200).send('OK')
+            res.sendStatus(200)
         } else {
-            res.status(500).send('Something went wrong')
+            res.sendStatus(500)
         }
     }
 }

@@ -11,6 +11,7 @@ app.use(express.urlencoded({ extended: true }))
 const users = require('./routes/api/user')
 const authentication = require('./routes/api/authentication')
 const todos = require('./routes/api/todo')
+
 app.use('/api/users', users)
 app.use('/api/authentication', authentication)
 app.use('/api/todos', todos)

@@ -36,10 +36,31 @@ const todoSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true
-    }
+    }/*,
+    listId: { // listans objectId _id
+        type: String,
+        required: true
+    }*/
   },
   { timestamps: true }
 )
+
+/*
+const listSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    creator: {
+        type: String
+    },
+    userIds: { // list of user _id (plural)
+        type: Array,
+        required: true
+    }
+  },
+  { timestamps: true }
+) */
 
 const user = mongoose.model('user', userSchema)
 const todos = mongoose.model('todos', todoSchema)
