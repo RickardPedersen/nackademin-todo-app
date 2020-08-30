@@ -7,8 +7,6 @@ function getOrder(order) {
 function getFilter(filter, user) {
     let filterObject = filter ? { title: new RegExp(filter, 'i') } : {}
     if (!user.isAdmin()) {filterObject.userId = user.userId}
-    console.log(user.role)
-    //console.log(filterObject)
     return filterObject
 }
 
@@ -39,9 +37,6 @@ module.exports = {
         let order = getOrder(req.params.order)
         let filter = getFilter(req.params.filter, req.user)
         let sortBy = getSort(req.params.sortBy, order)
-        console.log(order)
-        console.log(filter)
-        console.log(sortBy)
 
         let results = await model.getTodos(sortBy, req.params.skip, req.params.limit, filter)
 
@@ -56,7 +51,6 @@ module.exports = {
         if (!todo) { return res.sendStatus(404) }
         if (!req.user.owns(todo) && !req.user.isAdmin()) { return res.sendStatus(401) }
 
-        console.log(todo)
         res.status(200).json(todo)
     },
     postTodo: async (req, res) => {

@@ -5,7 +5,7 @@ const port = process.env.PORT || 7070
 const cors = require('cors')
 
 app.use(cors())
-app.use(express.json());
+app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 const users = require('./routes/api/user')

@@ -4,14 +4,12 @@ const url = 'http://localhost:7070/api/users'
 
 const config = {
     headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` }
-};
-console.log(config)
+}
 
 class TodoRequests {
     static async countUsers(filter) {
         try {
             const res = await axios.get(`${url}/count/${filter}`, config)
-            //console.log(res)
             const data = res.data
             return data
         } catch (error) {
@@ -23,7 +21,6 @@ class TodoRequests {
     static async getAllUsers(order, skip, limit, sortBy, filter) {
         try {
             const res = await axios.get(`${url}/${order}/${skip}/${limit}/${sortBy}/${filter}`, config)
-            //console.log(res)
             const data = res.data
             return data
         } catch (error) {

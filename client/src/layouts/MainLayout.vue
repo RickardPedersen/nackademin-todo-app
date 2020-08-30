@@ -3,6 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn
+          v-show="showMenu"
           flat
           dense
           round
@@ -19,8 +20,9 @@
     </q-header>
 
     <q-drawer
+      v-show="showMenu"
       v-model="leftDrawerOpen"
-      show-if-above
+      :show-if-above="showMenu"
       bordered
       content-class="bg-grey-1"
     >
@@ -51,24 +53,18 @@ import { mapGetters } from 'vuex'
 
 const linksData = [
   {
-    title: 'Home',
-    caption: '',
-    icon: 'home',
-    link: '/'
-  },
-  {
-    title: 'Todos',
+    title: 'All Todos',
     caption: '',
     icon: '',
-    link: 'todos'
+    link: '/todos'
   },
   {
     title: 'User List',
     caption: '',
     icon: '',
-    link: 'users'
+    link: '/users'
   }
-];
+]
 
 export default {
   name: 'MainLayout',
@@ -77,12 +73,12 @@ export default {
     return {
       leftDrawerOpen: false,
       essentialLinks: linksData,
-      showLogOutButton: false
+      showLogOutButton: false,
+      showMenu: false
     }
   },
   methods: {
     logout() {
-      console.log(localStorage.getItem('userToken'))
       localStorage.removeItem('userToken')
       //this.$router.go('/')
       location.reload(true)
@@ -93,9 +89,12 @@ export default {
   },
   created() {
     this.showLogOutButton = this.auth.loggedIn
+    this.showMenu = this.auth.isAdmin
   },
   beforeUpdate() {
     this.showLogOutButton = this.auth.loggedIn
+    this.showMenu = this.auth.isAdmin
+    this.leftDrawerOpen = this.auth.isAdmin
   }
 }
 </script>

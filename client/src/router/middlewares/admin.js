@@ -1,6 +1,6 @@
-export default async function guest ({ next, store }){
+export default async function admin ({ next, store }){
     await store.dispatch('checkIfLoggedIn')
-    if(store.getters.auth.loggedIn){
+    if(!store.getters.auth.isAdmin){
         return next('/todos')
     }
    

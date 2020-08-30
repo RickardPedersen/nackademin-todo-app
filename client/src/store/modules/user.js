@@ -18,14 +18,10 @@ const actions = {
     async checkIfLoggedIn({ commit }) {
         const config = {
             headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` }
-        };
-        console.log(config)
+        }
         try {
             const res = await axios.get('http://localhost:7070/api/authentication/isLoggedIn', config)
-            console.log(res.data)
-            console.log(res)
-            commit('setUser', res.data)
-            
+            commit('setUser', res.data) 
         } catch (error) {
             console.log(error)
             

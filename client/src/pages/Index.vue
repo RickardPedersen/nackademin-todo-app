@@ -130,20 +130,14 @@ export default {
   },
   methods: {
     async login() {
-      console.log('LOGGIN IN')
       const postData = {
         username: this.username,
         password: this.password
       }
       try {
-        
         let res = await axios.post('http://localhost:7070/api/authentication/login', postData)
         localStorage.setItem('userToken', res.data)
-        console.log(localStorage.getItem('userToken'))
 
-        //console.log('RESSSSSSSSSSSSSSS')
-        //console.log(res)
-        //console.log('SLUUUUUUUUUUUUUUUUUUUT')
         this.$router.push('/todos')
       } catch (error) {
         console.error(error)
@@ -156,15 +150,13 @@ export default {
       }
 
       try {
-        
         let res = await axios.post('http://localhost:7070/api/users', postData)
-        console.log(res)
+
         this.switchForm()
       } catch (error) {
         console.error(error)
       }
-      console.log('CREATING ACCOUNT')
-      console.log(this.auth.loggedIn)
+      //console.log(this.auth.loggedIn)
     },
     switchForm() {
       this.username = ''

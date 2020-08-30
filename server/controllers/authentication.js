@@ -9,13 +9,11 @@ function createToken(payload) {
 module.exports = {
     authenticateUser: async (req, res) =>{
         let user = await getUser({ username: req.body.username })
-        console.log(user)
 
         if (user) {
             const correctPassword = bcrypt.compareSync(req.body.password, user.password)
             if (correctPassword) {
                 let token = createToken({ userId: user._id, role: user.role })
-                console.log(token)
                 res.status(200).json(token)
             } else {
                 res.status(403).send('Wrong Password')
@@ -27,8 +25,6 @@ module.exports = {
         } 
     },
     isLoggedIn: async (req, res) => {
-        console.log(req.user)
-
         let resObject = {
             isLoggedIn: true,
             userId: req.user.userId,

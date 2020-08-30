@@ -1,5 +1,5 @@
 const model = require('../models/user.js')
-const { getTodos } = require('../models/todo')
+const { getTodos, countTodos } = require('../models/todo')
 const bcrypt = require('bcryptjs')
 
 function hashPassword(password) {
@@ -12,8 +12,12 @@ function getOrder(order) {
 
 function getFilter(filter, user) {
     let filterObject = filter ? { username: new RegExp(filter, 'i') } : {}
-    console.log(user.role)
-    //console.log(filterObject)
+    return filterObject
+}
+
+function getTodoFilter(filter, user) {
+    let filterObject = filter ? { title: new RegExp(filter, 'i') } : {}
+    if (!user.isAdmin()) {filterObject.userId = user.userId}
     return filterObject
 }
 
@@ -21,6 +25,22 @@ function getSort(sortBy, order) {
     switch (sortBy) {
         case 'username':
             return { username: order }
+
+        case 'createdAt':
+            return { createdAt: order }
+
+        case 'updatedAt':
+            return { updatedAt: order }
+
+        default:
+            return { title: order }
+    }
+}
+
+function getTodoSort(sortBy, order) {
+    switch (sortBy) {
+        case 'title':
+            return { title: order }
 
         case 'createdAt':
             return { createdAt: order }
@@ -44,9 +64,6 @@ module.exports = {
         let order = getOrder(req.params.order)
         let filter = getFilter(req.params.filter, req.user)
         let sortBy = getSort(req.params.sortBy, order)
-        console.log(order)
-        console.log(filter)
-        console.log(sortBy)
 
         let results = await model.getAllUsers(sortBy, req.params.skip, req.params.limit, filter)
 
@@ -61,14 +78,30 @@ module.exports = {
         if (!user) { return res.sendStatus(404) }
         if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
 
-        console.log(user)
         res.status(200).json(user)
     },
-    getUserTodos: async (req, res) => { // ska redigeras
-        let posts = await getTodos({ userId: req.params.id })
+    countUserTodos: async (req, res) => {
+        let filter = getTodoFilter(req.params.filter, req.user)
+        filter.userId = req.params.id
 
-        if (posts) {
-            res.status(200).json(posts)
+        let todos = await countTodos(filter)
+
+        if (todos) {
+            res.status(200).json(todos)
+        } else {
+            res.sendStatus(404)
+        }
+    },
+    getUserTodos: async (req, res) => {
+        let order = getOrder(req.params.order)
+        let sortBy = getTodoSort(req.params.sortBy, order)
+        let filter = getTodoFilter(req.params.filter, req.user)
+        filter.userId = req.params.id
+
+        let todos = await getTodos(sortBy, req.params.skip, req.params.limit, filter)
+
+        if (todos) {
+            res.status(200).json(todos)
         } else {
             res.sendStatus(404)
         }
@@ -85,7 +118,6 @@ module.exports = {
             password: hashPassword(req.body.password),
             role: 'user'
         }
-        console.log(req.user)
 
         if (req.body.hasOwnProperty('role') &&
             req.body.role === 'admin' &&
@@ -93,8 +125,6 @@ module.exports = {
             req.user.isAdmin()) {
                 user.role = 'admin'
         }
-
-        console.log(user)
 
         let success = await model.addUser(user)
 
@@ -139,7 +169,6 @@ module.exports = {
     },
     deleteUser: async (req, res) => {
         let user = await model.getUser({ _id: req.params.id })
-        console.log(user)
         if (!user) { return res.sendStatus(404) }
         if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
 

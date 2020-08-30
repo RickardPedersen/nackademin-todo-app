@@ -2,8 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import test from '../store'
 const store = test()
-console.log('HÄR KOMMER STOREN')
-console.log(store)
 
 import routes from './routes'
 

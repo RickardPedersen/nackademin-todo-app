@@ -3,7 +3,8 @@ const {todos} = require('../database/dbSetup')
 module.exports = {
     countTodos: async (filter) => {
         try {
-            return await todos.countDocuments(filter)
+            let test = await todos.countDocuments(filter)
+            return test
         } catch (error) {
             console.log(error)
             return false

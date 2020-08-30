@@ -71,7 +71,7 @@
       <template v-slot:body="props">
         <q-tr :props="props">
         	<q-td>
-						<q-btn>Todos</q-btn>
+						<q-btn :to="'/user/' + props.row._id">Todos</q-btn>
           </q-td>
 
           <q-td key="username" :props="props">
@@ -195,12 +195,8 @@ export default {
 		async onRequest (props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
 			const filter = props.filter
-			console.log(sortBy)
-			console.log(descending)
-			console.log(filter)
 
       this.loading = true
-
 
       // update rowsCount with appropriate value
       this.pagination.rowsNumber = await this.getRowsNumberCount(filter)
@@ -230,21 +226,16 @@ export default {
 			let skip = 0
 
 			skip = (page - 1) * limit
-			console.log(limit)
 			return await UserRequests.getAllUsers(order, skip, limit, sortBy, filter)
     },
 
     async getRowsNumberCount (filter) {
       let count = 0
 			count = await UserRequests.countUsers(filter)
-			console.log('COUNTED')
-			console.log(count)
       return count
     },
     async deleteTodo(id) {
       await UserRequests.deleteUser(id)
-      console.log('DELETE')
-      console.log(id)
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
@@ -255,8 +246,6 @@ export default {
         username: val
       }
       await UserRequests.editUser(editedTodo, id)
-      console.log(id)
-      console.log(val)
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
@@ -268,8 +257,6 @@ export default {
         role: val
       }
       await UserRequests.editUser(editedRole, id)
-      console.log(id)
-      console.log(val)
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
@@ -281,8 +268,6 @@ export default {
         password: val
       }
       await UserRequests.editUser(editedPassword, id)
-      console.log(id)
-      console.log(val)
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
@@ -291,7 +276,6 @@ export default {
 		},
     async addUser() {
       let validated = await this.createRules(this.newTitle)
-      console.log('SUBMIT: '+validated)
 
       if (validated) {
         let user = {
