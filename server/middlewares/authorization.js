@@ -16,13 +16,18 @@ module.exports = {
             req.user = await verifyToken(token)
             next()
         } catch (error) {
+            let resObject = {
+                isLoggedIn: false,
+                error: error.message
+            }
+
             if (error instanceof jwt.TokenExpiredError) {
-                res.status(403).send('Your token has expired')
+                res.status(403).send(resObject)
             } else if (error.message === 'invalid token') {
-                res.status(403).send(error.message)
+                res.status(403).send(resObject)
             } else {
                 console.log(error)
-                res.sendStatus(500) 
+                res.status(500).send(resObject) 
             }
         }
     },

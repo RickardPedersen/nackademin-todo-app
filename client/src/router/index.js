@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import test from '../store'
+const store = test()
+console.log('HÄR KOMMER STOREN')
+console.log(store)
 
 import routes from './routes'
 
@@ -24,6 +28,23 @@ export default function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     mode: process.env.VUE_ROUTER_MODE,
     base: process.env.VUE_ROUTER_BASE
+  })
+
+  Router.beforeEach((to, from, next) => {
+    if (!to.meta.middleware) {
+        return next()
+    }
+    const middleware = to.meta.middleware
+  
+    const context = {
+        to,
+        from,
+        next,
+        store
+    }
+    return middleware[0]({
+        ...context
+    })
   })
 
   return Router

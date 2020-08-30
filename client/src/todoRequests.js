@@ -2,10 +2,15 @@ import axios from 'axios'
 
 const url = 'http://localhost:7070/api/todos'
 
+const config = {
+    headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` }
+};
+console.log(config)
+
 class TodoRequests {
     static async countTodos(filter) {
         try {
-            const res = await axios.get(`${url}/count/${filter}`)
+            const res = await axios.get(`${url}/count/${filter}`, config)
             //console.log(res)
             const data = res.data
             return data
@@ -17,7 +22,7 @@ class TodoRequests {
 
     static async getAllTodos(order, skip, limit, sortBy, filter) {
         try {
-            const res = await axios.get(`${url}/get/${order}/${skip}/${limit}/${sortBy}/${filter}`)
+            const res = await axios.get(`${url}/get/${order}/${skip}/${limit}/${sortBy}/${filter}`, config)
             //console.log(res)
             const data = res.data
             return data
@@ -29,7 +34,7 @@ class TodoRequests {
 
     static async getDoneTodos() {
         try {
-            const res = await axios.get(`${url}/get/done`)
+            const res = await axios.get(`${url}/get/done`, config)
             //console.log(res)
             const data = res.data
             return data
@@ -41,7 +46,7 @@ class TodoRequests {
 
     static async createTodo(postData) {
         try {
-            const res = await axios.post(`${url}/post`, postData)
+            const res = await axios.post(`${url}/post`, postData, config)
             const data = res.data
             return data
         } catch (error) {
@@ -52,7 +57,7 @@ class TodoRequests {
 
     static async editTodo(postData, id) {
         try {
-            const res = await axios.put(`${url}/edit/${id}`, postData)
+            const res = await axios.patch(`${url}/edit/${id}`, postData, config)
             const data = res.data
             return data
         } catch (error) {
@@ -63,7 +68,7 @@ class TodoRequests {
 
     static async doneTodo(postData, id) {
         try {
-            const res = await axios.put(`${url}/done/${id}`, postData)
+            const res = await axios.patch(`${url}/edit/${id}`, postData, config)
             const data = res.data
             return data
         } catch (error) {
@@ -74,7 +79,7 @@ class TodoRequests {
 
     static async deleteTodo(id) {
         try {
-            const res = await axios.delete(`${url}/delete/${id}`)
+            const res = await axios.delete(`${url}/delete/${id}`, config)
             const data = res.data
             return data
         } catch (error) {

@@ -14,6 +14,7 @@
         <q-toolbar-title>
           Todo App
         </q-toolbar-title>
+        <q-btn v-show="showLogOutButton" @click="logout" color="negative">Log Out</q-btn>
       </q-toolbar>
     </q-header>
 
@@ -46,6 +47,7 @@
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
+import { mapGetters } from 'vuex'
 
 const linksData = [
   {
@@ -55,16 +57,10 @@ const linksData = [
     link: '/'
   },
   {
-    title: 'Add Todo',
+    title: 'Todos',
     caption: '',
     icon: '',
-    link: 'create'
-  },
-  {
-    title: 'Todo Archive',
-    caption: '',
-    icon: '',
-    link: 'archive'
+    link: 'todos'
   }
 ];
 
@@ -74,8 +70,26 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksData
+      essentialLinks: linksData,
+      showLogOutButton: false
     }
+  },
+  methods: {
+    logout() {
+      console.log(localStorage.getItem('userToken'))
+      localStorage.removeItem('userToken')
+      //this.$router.go('/')
+      location.reload(true)
+    }
+  },
+  computed: {
+    ...mapGetters(['auth'])
+  },
+  created() {
+    this.showLogOutButton = this.auth.loggedIn
+  },
+  beforeUpdate() {
+    this.showLogOutButton = this.auth.loggedIn
   }
 }
 </script>

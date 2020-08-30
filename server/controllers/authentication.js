@@ -25,5 +25,15 @@ module.exports = {
         } else {
             res.status(404).send('Not Found')
         } 
+    },
+    isLoggedIn: async (req, res) => {
+        console.log(req.user)
+
+        let resObject = {
+            isLoggedIn: true,
+            userId: req.user.userId,
+            role: req.user.role
+        }
+        res.status(200).json(resObject)
     }
 }
