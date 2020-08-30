@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const db = require('../database/dbSetup')
-//const { verify } = require('jsonwebtoken')
 
 module.exports = {
     async countUsers(filter) {

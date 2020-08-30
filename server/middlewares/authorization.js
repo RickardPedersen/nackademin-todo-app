@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken')
-const secret = process.env.SECRET
 const {verifyToken} = require('../models/user.js')
-//const {getComment} = require('../models/comment.js')
 
 module.exports = {
     user: async (req, res, next) => {
