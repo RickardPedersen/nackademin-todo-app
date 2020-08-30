@@ -61,6 +61,12 @@ const linksData = [
     caption: '',
     icon: '',
     link: 'todos'
+  },
+  {
+    title: 'User List',
+    caption: '',
+    icon: '',
+    link: 'users'
   }
 ];
 

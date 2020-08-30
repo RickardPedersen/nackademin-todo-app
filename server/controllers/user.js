@@ -6,9 +6,49 @@ function hashPassword(password) {
     return bcrypt.hashSync(password, 10)
 }
 
+function getOrder(order) {
+    return order === 'true' ? -1 : 1
+}
+
+function getFilter(filter, user) {
+    let filterObject = filter ? { username: new RegExp(filter, 'i') } : {}
+    console.log(user.role)
+    //console.log(filterObject)
+    return filterObject
+}
+
+function getSort(sortBy, order) {
+    switch (sortBy) {
+        case 'username':
+            return { username: order }
+
+        case 'createdAt':
+            return { createdAt: order }
+
+        case 'updatedAt':
+            return { updatedAt: order }
+
+        default:
+            return { title: order }
+    }
+}
+
 module.exports = {
+    countUsers: async (req, res) => {
+        let filter = getFilter(req.params.filter, req.user)
+        let result = await model.countUsers(filter)
+
+        res.status(200).json(result)
+    },
     getAllUsers: async (req, res) => {
-        let results = await model.getAllUsers()
+        let order = getOrder(req.params.order)
+        let filter = getFilter(req.params.filter, req.user)
+        let sortBy = getSort(req.params.sortBy, order)
+        console.log(order)
+        console.log(filter)
+        console.log(sortBy)
+
+        let results = await model.getAllUsers(sortBy, req.params.skip, req.params.limit, filter)
 
         if (results) {
             res.status(200).json(results)
@@ -18,14 +58,11 @@ module.exports = {
     },
     getUser: async (req, res) => {
         let user = await model.getUser({ _id: req.params.id })
+        if (!user) { return res.sendStatus(404) }
+        if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
 
-        if (user) {
-    
-            console.log(user)
-            res.status(200).json(user)
-        } else {
-            res.sendStatus(404)
-        } 
+        console.log(user)
+        res.status(200).json(user)
     },
     getUserTodos: async (req, res) => { // ska redigeras
         let posts = await getTodos({ userId: req.params.id })

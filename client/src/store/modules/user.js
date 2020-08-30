@@ -3,7 +3,8 @@ import axios from 'axios'
 const state = {
     user: {
         loggedIn: false,
-        role: 'guest'
+        role: 'guest',
+        isAdmin: false
     }
 }
 
@@ -36,10 +37,12 @@ const mutations = {
     setUser: (state, user) => {
         state.user.loggedIn = true
         state.user.role = user.role
+        state.user.isAdmin = user.role === 'admin'
     },
     logoutUser: (state, user) => {
         state.user.loggedIn = false
         state.user.role = 'guest'
+        state.user.isAdmin = false
     }
 }
 

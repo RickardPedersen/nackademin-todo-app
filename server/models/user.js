@@ -3,11 +3,23 @@ const db = require('../database/dbSetup')
 //const { verify } = require('jsonwebtoken')
 
 module.exports = {
-    async getAllUsers() {
+    async countUsers(filter) {
         try {
-            let result = await db.user.find({})
-            console.log(result)
-            return result
+            return await db.user.countDocuments(filter)
+        } catch (error) {
+            console.log(error)
+            return false
+        }   
+    },
+    async getAllUsers(sortBy, skip, limit, filter) {
+        try {
+            let users = await db.user.find(filter)
+            .collation({ locale: "sv" })
+            .sort(sortBy)
+            .skip(parseInt(skip))
+            .limit(parseInt(limit))
+
+            return users
         } catch (error) {
             console.log(error)
             return false

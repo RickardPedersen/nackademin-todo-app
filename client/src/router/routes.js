@@ -30,6 +30,15 @@ const routes = [
               auth
           ]
         }
+      },
+      {
+        path: 'users',
+        component: () => import('pages/UserList.vue'),
+        meta: {
+          middleware: [
+              auth
+          ]
+        }
       }
     ]
   },
