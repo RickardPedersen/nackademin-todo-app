@@ -28,17 +28,31 @@
 
     <template v-slot:top-left>
       <div class="q-table__title">Users</div>
-      <q-form @submit="submitTodo">
+      <q-form @submit="addUser">
+				<h5 class="q-mb-sm">Add User</h5>
         <q-input
-        ref="addInput"
+        	ref="addUsername"
+					dense
+					outlined
           debounce="300"
-          v-model="newTitle"
-          label="Add new todo"
+          v-model="addUsername"
+          label="Username"
           lazy-rules="ondemand"
           :rules="[ createRules ]"
-        >
-            <q-btn  dense flat icon="add" type="submit" />
-        </q-input>
+        />
+
+				<q-input
+        	ref="addPassword"
+					dense
+					outlined
+          debounce="300"
+          v-model="addPassword"
+          label="Password"
+          lazy-rules="ondemand"
+          :rules="[ createRules ]"
+        />
+
+            <q-btn dense type="submit" >Add user</q-btn>
       </q-form>
     </template>
 
@@ -127,6 +141,8 @@ import UserRequests from '../UserRequests'
 export default {
   data () {
     return {
+			addUsername: '',
+			addPassword: '',
 			newPassword: '',
       newTitle: '',
 			filter: '',
@@ -273,19 +289,25 @@ export default {
       })
       return true
 		},
-    async submitTodo() {
+    async addUser() {
       let validated = await this.createRules(this.newTitle)
       console.log('SUBMIT: '+validated)
 
       if (validated) {
-        let todo = {
-          title: this.newTitle
+        let user = {
+					username: this.addUsername,
+					password: this.addPassword
         }
 
-        await UserRequests.createUser(todo)
-        this.newTitle = ''
-        this.$refs.addInput.blur()
-        this.$refs.addInput.resetValidation()
+        await UserRequests.createUser(user)
+        this.addUsername = ''
+				this.addPassword = ''
+				
+        this.$refs.addUsername.blur()
+				this.$refs.addPassword.blur()
+				
+        this.$refs.addUsername.resetValidation()
+        this.$refs.addPassword.resetValidation()
 
         await this.onRequest({
           pagination: this.pagination,
