@@ -27,21 +27,23 @@ function getSort(sortBy, order) {
 }
 
 module.exports = {
-    countTodos: async (req, res) => {
-        let filter = getFilter(req.params.filter, req.user)
-        let result = await model.countTodos(filter)
-
-        res.status(200).json(result)
-    },
     getTodos: async (req, res) => {
-        let order = getOrder(req.params.order)
-        let filter = getFilter(req.params.filter, req.user)
-        let sortBy = getSort(req.params.sortBy, order)
+        let order = getOrder(req.query.order)
+        let filter = getFilter(req.query.filter, req.user)
+        let sortBy = getSort(req.query.sortBy, order)
+        let skip = req.query.skip || 0
+        let limit = req.query.limit || 5
+        console.log(limit)
 
-        let results = await model.getTodos(sortBy, req.params.skip, req.params.limit, filter)
+        let count = await model.countTodos(filter)
+        let todos = await model.getTodos(sortBy, skip, limit, filter)
 
-        if (results) {
-            res.status(200).json(results)
+        if (todos) {
+            let resObject = {
+                count,
+                data: todos
+            }
+            res.status(200).json(resObject)
         } else {
             res.sendStatus(500)
         }

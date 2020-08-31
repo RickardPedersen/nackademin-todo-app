@@ -54,21 +54,22 @@ function getTodoSort(sortBy, order) {
 }
 
 module.exports = {
-    countUsers: async (req, res) => {
-        let filter = getFilter(req.params.filter, req.user)
-        let result = await model.countUsers(filter)
-
-        res.status(200).json(result)
-    },
     getAllUsers: async (req, res) => {
-        let order = getOrder(req.params.order)
-        let filter = getFilter(req.params.filter, req.user)
-        let sortBy = getSort(req.params.sortBy, order)
+        let order = getOrder(req.query.order)
+        let filter = getFilter(req.query.filter, req.user)
+        let sortBy = getSort(req.query.sortBy, order)
+        let skip = req.query.skip || 0
+        let limit = req.query.limit || 5
 
-        let results = await model.getAllUsers(sortBy, req.params.skip, req.params.limit, filter)
+        let count = await model.countUsers(filter)
+        let users = await model.getAllUsers(sortBy, skip, limit, filter)
 
-        if (results) {
-            res.status(200).json(results)
+        if (users) {
+            let resObject = {
+                count,
+                data: users
+            }
+            res.status(200).json(resObject)
         } else {
             res.sendStatus(404)
         } 
@@ -80,28 +81,23 @@ module.exports = {
 
         res.status(200).json(user)
     },
-    countUserTodos: async (req, res) => {
-        let filter = getTodoFilter(req.params.filter, req.user)
-        filter.userId = req.params.id
-
-        let todos = await countTodos(filter)
-
-        if (todos) {
-            res.status(200).json(todos)
-        } else {
-            res.sendStatus(404)
-        }
-    },
     getUserTodos: async (req, res) => {
-        let order = getOrder(req.params.order)
-        let sortBy = getTodoSort(req.params.sortBy, order)
-        let filter = getTodoFilter(req.params.filter, req.user)
+        let skip = req.query.skip || 0
+        let limit = req.query.limit || 5
+        let order = getOrder(req.query.order)
+        let sortBy = getTodoSort(req.query.sortBy, order)
+        let filter = getTodoFilter(req.query.filter, req.user)
         filter.userId = req.params.id
 
-        let todos = await getTodos(sortBy, req.params.skip, req.params.limit, filter)
+        let count = await countTodos(filter)
+        let todos = await getTodos(sortBy, skip, limit, filter)
 
         if (todos) {
-            res.status(200).json(todos)
+            let resObject = {
+                count,
+                data: todos
+            }
+            res.status(200).json(resObject)
         } else {
             res.sendStatus(404)
         }

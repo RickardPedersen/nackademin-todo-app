@@ -4,11 +4,10 @@ const {user} = require('../../middlewares/authorization')
 
 const router = new Router()
 
-router.get('/count/:filter?', user, controller.countTodos)
-router.get('/get/:order?/:skip?/:limit?/:sortBy?/:filter?', user, controller.getTodos)
-router.get('/getOne/:id', user, controller.getTodo)
-router.post('/post', user, controller.postTodo)
-router.patch('/edit/:id', user, controller.editTodo)
-router.delete('/delete/:id', user, controller.deleteTodo)
+router.get('/', user, controller.getTodos)
+router.get('/:id', user, controller.getTodo)
+router.post('/', user, controller.postTodo)
+router.patch('/:id', user, controller.editTodo)
+router.delete('/:id', user, controller.deleteTodo)
 
 module.exports = router
