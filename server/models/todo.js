@@ -3,8 +3,7 @@ const {todos} = require('../database/dbSetup')
 module.exports = {
     countTodos: async (filter) => {
         try {
-            let test = await todos.countDocuments(filter)
-            return test
+            return await todos.countDocuments(filter)
         } catch (error) {
             console.log(error)
             return false
@@ -12,13 +11,11 @@ module.exports = {
     },
     getTodos: async (sortBy, skip, limit, filter) => {
         try {
-            let results = await todos.find(filter)
+            return await todos.find(filter)
             .collation({ locale: "sv" })
             .sort(sortBy)
             .skip(parseInt(skip))
             .limit(parseInt(limit))
-
-            return results
         } catch (error) {
             console.log(error)
             return false
@@ -26,8 +23,7 @@ module.exports = {
     },
     getTodo: async (id) => {
         try {
-            let result = await todos.findOne({ _id: id })
-            return result
+            return await todos.findOne({ _id: id })
         } catch (error) {
             console.log(error)
             return false

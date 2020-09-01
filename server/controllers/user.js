@@ -10,7 +10,7 @@ function getOrder(order) {
     return order === 'true' ? -1 : 1
 }
 
-function getFilter(filter, user) {
+function getFilter(filter) {
     let filterObject = filter ? { username: new RegExp(filter, 'i') } : {}
     return filterObject
 }

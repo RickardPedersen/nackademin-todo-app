@@ -33,7 +33,6 @@ module.exports = {
         let sortBy = getSort(req.query.sortBy, order)
         let skip = req.query.skip || 0
         let limit = req.query.limit || 5
-        console.log(limit)
 
         let count = await model.countTodos(filter)
         let todos = await model.getTodos(sortBy, skip, limit, filter)

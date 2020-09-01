@@ -156,7 +156,6 @@ export default {
       } catch (error) {
         console.error(error)
       }
-      //console.log(this.auth.loggedIn)
     },
     switchForm() {
       this.username = ''

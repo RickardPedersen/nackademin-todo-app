@@ -12,13 +12,11 @@ module.exports = {
     },
     async getAllUsers(sortBy, skip, limit, filter) {
         try {
-            let users = await db.user.find(filter)
+            return await db.user.find(filter)
             .collation({ locale: "sv" })
             .sort(sortBy)
             .skip(parseInt(skip))
             .limit(parseInt(limit))
-
-            return users
         } catch (error) {
             console.log(error)
             return false
@@ -34,9 +32,7 @@ module.exports = {
     },
     async getUser(filter) {
         try {
-            let user = await db.user.findOne(filter)
-
-            return user 
+            return await db.user.findOne(filter)
         } catch (error) {
             console.log(error)
             return false
@@ -45,7 +41,6 @@ module.exports = {
     async addUser(user) {
         try {
             await db.user.create(user)
-
             return true
         } catch (error) {
             console.log(error)
@@ -55,7 +50,6 @@ module.exports = {
     async editUser(id, updatedUser) {
         try {
             let updPost = await db.user.updateOne({ _id: id },{ $set: updatedUser })
-
             return updPost.n
         } catch (error) {
             console.log(error)
@@ -65,9 +59,7 @@ module.exports = {
     async deleteUser(id) {
         try {
             let delUsers = await db.user.deleteOne({ _id: id })
-
             return delUsers.n
-            
         } catch (error) {
             console.log(error)
             return false
