@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const db = require('../database/dbSetup')
 
 module.exports = {
-    async countUsers(filter) {
+    countUsers: async (filter) => {
         try {
             return await db.user.countDocuments(filter)
         } catch (error) {
@@ -10,7 +10,7 @@ module.exports = {
             return false
         }   
     },
-    async getAllUsers(sortBy, skip, limit, filter) {
+    getAllUsers: async (sortBy, skip, limit, filter) => {
         try {
             return await db.user.find(filter)
             .collation({ locale: "sv" })
@@ -22,7 +22,7 @@ module.exports = {
             return false
         }
     },
-    async verifyToken(token) {
+    verifyToken: async (token) => {
         const payload = jwt.verify(token, process.env.SECRET)
         return {
             ...payload,
@@ -30,7 +30,7 @@ module.exports = {
             is(user) { return user._id.toString() === this.userId },
             isAdmin() { return this.role === 'admin' } }
     },
-    async getUser(filter) {
+    getUser: async (filter) => {
         try {
             return await db.user.findOne(filter)
         } catch (error) {
@@ -38,7 +38,7 @@ module.exports = {
             return false
         }
     },
-    async addUser(user) {
+    addUser: async (user) => {
         try {
             await db.user.create(user)
             return true
@@ -47,7 +47,7 @@ module.exports = {
             return false
         }
     },
-    async editUser(id, updatedUser) {
+    editUser: async (id, updatedUser) => {
         try {
             let updPost = await db.user.updateOne({ _id: id },{ $set: updatedUser })
             return updPost.n
@@ -56,7 +56,7 @@ module.exports = {
             return false
         }
     },
-    async deleteUser(id) {
+    deleteUser: async (id) => {
         try {
             let delUsers = await db.user.deleteOne({ _id: id })
             return delUsers.n
