@@ -107,7 +107,12 @@ module.exports = {
             !req.body.hasOwnProperty('password')
             ) {
                 res.sendStatus(400)
-        }
+        }    
+
+        // check if username already exists, case insensitive
+        const caseInsensitiveUsername = new RegExp(`^${req.body.username}$` ,'i')
+        const existingUser = await model.getUser({ username: caseInsensitiveUsername })
+        if (existingUser) { return res.status(403).send('username already exists') }
 
         let user = {
             username: req.body.username,
@@ -141,10 +146,21 @@ module.exports = {
         }
 
         let updatedUser = {}
-
+        
         if (req.body.hasOwnProperty('username')) {
+            // check if username already exists, case insensitive
+            const caseInsensitiveUsername = new RegExp(`^${req.body.username}$` ,'i')
+            const existingUser = await model.getUser({ username: caseInsensitiveUsername })
+            if (existingUser) {
+                // check if existing username is your own so you can change to upper case/lower case letters
+                if (req.user.userId !== existingUser._id.toString()) {
+                    return res.status(403).send('username already exists')
+                }
+            }
+
             updatedUser.username = req.body.username
         }
+
         if (req.body.hasOwnProperty('password')) {
             updatedUser.password = hashPassword(req.body.password)
         }
