@@ -98,7 +98,6 @@ export default {
           format: (val) => `${val}`,
           sortable: true,
         },
-        /*{ name: 'dueDate', align: 'center', label: 'Due Date', field: 'dueDate', sortable: true },*/
         {
           name: "createdAt",
           label: "Created",
@@ -123,29 +122,19 @@ export default {
 
       this.loading = true
 
-      // update rowsCount with appropriate value
-      this.pagination.rowsNumber = await this.getRowsNumberCount(
-        filter,
-        this.$route.params.id
-      )
-
       // get all rows if "All" (0) is selected
-      const fetchCount =
-        rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
+      const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
 
       // calculate starting row of data
       const startRow = (page - 1) * rowsPerPage
 
       // fetch data from server
-      //console.log(this.$route.params.id)
-      const returnedData = await this.fetchFromServer(
-        this.$route.params.id,
-        descending,
-        page,
-        fetchCount,
-        sortBy,
-        filter
-      )
+      const fetchResult = await this.fetchFromServer(this.$route.params.id, descending, page, fetchCount, sortBy, filter)
+
+      // update rowsCount with appropriate value
+      this.pagination.rowsNumber = fetchResult.count
+
+      const returnedData = fetchResult.data
 
       // clear out existing data and add new
       this.todos.splice(0, this.todos.length, ...returnedData)
@@ -157,27 +146,12 @@ export default {
 
       this.loading = false
     },
-
     async fetchFromServer(userId, order, page, limit, sortBy, filter) {
       let skip = 0
-
       skip = (page - 1) * limit
-      return await TodoRequests.getUsersTodos(
-        userId,
-        order,
-        skip,
-        limit,
-        sortBy,
-        filter
-      )
-    },
 
-    async getRowsNumberCount(filter, userId) {
-      let count = 0
-      count = await TodoRequests.countUserTodos(filter, userId)
-      return count
+      return await TodoRequests.getUsersTodos(userId, order, skip, limit, sortBy, filter)
     },
-
     async deleteTodo(id) {
       await TodoRequests.deleteTodo(id)
 

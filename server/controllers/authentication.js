@@ -7,11 +7,10 @@ function createToken(payload) {
 }
 
 module.exports = {
-    authenticateUser: async (req, res) =>{
+    authenticateUser: async (req, res) => {
         const caseInsensitiveUsername = new RegExp(`^${req.body.username}$` ,'i')
         const user = await getUser({ username: caseInsensitiveUsername })
         if (!user) { return res.sendStatus(404) } 
-        //let user = await getUser({ username: req.body.username })
 
         const correctPassword = bcrypt.compareSync(req.body.password, user.password)
         if (correctPassword) {

@@ -1,10 +1,5 @@
 <template>
   <div class="q-pa-md">
-    <!--
-      :selected-rows-label="getSelectedString"
-      selection="single"
-      :selected.sync="selected"
-    -->
     <q-table
       title="Users"
       :data="users"
@@ -110,13 +105,6 @@
               <q-input v-model="props.row.role" dense autofocus counter />
             </q-popup-edit>
           </q-td>
-<!--
-          <q-td key="dueDate" :props="props">
-            {{ new Date(props.row.dueDate).toLocaleTimeString() }}
-            <q-popup-edit v-model="props.row.dueDate" title="Update calories" buttons>
-              <q-input type="number" v-model="props.row.dueDate" dense autofocus />
-            </q-popup-edit>
-          </q-td>-->
 
           <q-td key="createdAt" :props="props">
             <div class="text-pre-wrap">{{ new Date(props.row.createdAt).toLocaleTimeString() }}</div>
@@ -182,9 +170,7 @@ export default {
           align: 'left',
           field: row => row.name,
           format: val => `${val}`
-          //sortable: true
         },
-        /*{ name: 'dueDate', align: 'center', label: 'Due Date', field: 'dueDate', sortable: true },*/
         { name: 'createdAt', label: 'CreatedAt', field: 'createdAt', sortable: true, style: 'width: 10px' },
         { name: 'updatedAt', label: 'UpdatedAt', field: 'updatedAt', sortable: true, },
         { name: 'delete', label: 'Delete', field: 'delete' }
@@ -198,9 +184,6 @@ export default {
 
       this.loading = true
 
-      // update rowsCount with appropriate value
-      this.pagination.rowsNumber = await this.getRowsNumberCount(filter)
-
       // get all rows if "All" (0) is selected
       const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
 
@@ -209,7 +192,12 @@ export default {
 
       // fetch data from server
 
-      const returnedData = await this.fetchFromServer(descending, page, fetchCount, sortBy, filter)
+      const fetchResult = await this.fetchFromServer(descending, page, fetchCount, sortBy, filter)
+
+      // update rowsCount with appropriate value
+      this.pagination.rowsNumber = fetchResult.count
+
+      const returnedData = fetchResult.data
 
       // clear out existing data and add new
       this.users.splice(0, this.users.length, ...returnedData)
@@ -224,15 +212,9 @@ export default {
 
     async fetchFromServer (order, page, limit, sortBy, filter) {
 			let skip = 0
+      skip = (page - 1) * limit
 
-			skip = (page - 1) * limit
-			return await UserRequests.getAllUsers(order, skip, limit, sortBy, filter)
-    },
-
-    async getRowsNumberCount (filter) {
-      let count = 0
-			count = await UserRequests.countUsers(filter)
-      return count
+      return await UserRequests.getAllUsers(order, skip, limit, sortBy, filter)
     },
     async deleteTodo(id) {
       await UserRequests.deleteUser(id)
