@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken')
-const db = require('../database/dbSetup')
+const {user} = require('../database/dbSetup')
 
 module.exports = {
     countUsers: async (filter) => {
         try {
-            return await db.user.countDocuments(filter)
+            return await user.countDocuments(filter)
         } catch (error) {
             console.log(error)
             return false
@@ -12,7 +12,7 @@ module.exports = {
     },
     getAllUsers: async (sortBy, skip, limit, filter) => {
         try {
-            return await db.user.find(filter)
+            return await user.find(filter)
             .collation({ locale: "sv" })
             .sort(sortBy)
             .skip(parseInt(skip))
@@ -32,15 +32,15 @@ module.exports = {
     },
     getUser: async (filter) => {
         try {
-            return await db.user.findOne(filter)
+            return await user.findOne(filter)
         } catch (error) {
             console.log(error)
             return false
         }
     },
-    addUser: async (user) => {
+    addUser: async (userObject) => {
         try {
-            await db.user.create(user)
+            await user.create(userObject)
             return true
         } catch (error) {
             console.log(error)
@@ -49,7 +49,7 @@ module.exports = {
     },
     editUser: async (id, updatedUser) => {
         try {
-            let updPost = await db.user.updateOne({ _id: id },{ $set: updatedUser })
+            let updPost = await user.updateOne({ _id: id },{ $set: updatedUser })
             return updPost.n
         } catch (error) {
             console.log(error)
@@ -58,7 +58,7 @@ module.exports = {
     },
     deleteUser: async (id) => {
         try {
-            let delUsers = await db.user.deleteOne({ _id: id })
+            let delUsers = await user.deleteOne({ _id: id })
             return delUsers.n
         } catch (error) {
             console.log(error)

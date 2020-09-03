@@ -1,10 +1,42 @@
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost:27017/TodoAppDB', { useNewUrlParser: true, useUnifiedTopology: true })
+//mongoose.connect('mongodb://localhost:27017/TodoAppDB', { useNewUrlParser: true, useUnifiedTopology: true })
 
-const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function() {
-  console.log('Connected to db')
+async function connect() {
+    try {
+        //console.log(process.env.ENVIRONMENT)
+        switch (process.env.ENVIRONMENT) {
+            case 'dev':
+                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_dev', { useNewUrlParser: true, useUnifiedTopology: true })
+                break;
+
+            case 'prod':
+                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_prod', { useNewUrlParser: true, useUnifiedTopology: true })
+                break;
+
+            case 'test':
+                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_test', { useNewUrlParser: true, useUnifiedTopology: true })
+                break;
+            
+            default:
+                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_dev', { useNewUrlParser: true, useUnifiedTopology: true })
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+//connect()
+
+function disconnect() {
+    mongoose.connection.close(() => {
+        console.log('Database connection closed')
+    })
+}
+//disconnect()
+
+//const db = mongoose.connection
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
+mongoose.connection.once('open', function() {
+  console.log(`Connected to ${process.env.ENVIRONMENT} database`)
 })
 
 const userSchema = new mongoose.Schema({
@@ -36,33 +68,35 @@ const todoSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true
-    }/*,
-    listId: { // listans objectId _id
+    },
+    listId: {
         type: String,
         required: true
-    }*/
+    }
   },
   { timestamps: true }
 )
 
-/*
-const listSchema = new mongoose.Schema({
+
+const todoListSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
     },
     creator: {
-        type: String
+        type: String,
+        required: true
     },
-    userIds: { // list of user _id (plural)
+    userIds: {
         type: Array,
         required: true
     }
   },
   { timestamps: true }
-) */
+)
 
 const user = mongoose.model('user', userSchema)
 const todos = mongoose.model('todos', todoSchema)
+const todoList = mongoose.model('todoList', todoListSchema)
 
-module.exports = {user, todos}
+module.exports = {connect, disconnect, user, todos, todoList}
