@@ -9,8 +9,8 @@ const server = app.listen(port, async () => {
     await connect()
 })
 
-function shutdown() {
-    disconnect()
+async function shutdown() {
+    await disconnect()
     server.close(() => {
         console.log('Server closed')
     })

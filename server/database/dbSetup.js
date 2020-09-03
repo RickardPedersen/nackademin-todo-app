@@ -26,10 +26,14 @@ async function connect() {
 }
 //connect()
 
-function disconnect() {
-    mongoose.connection.close(() => {
-        console.log('Database connection closed')
-    })
+async function disconnect() {
+    try {
+        await mongoose.connection.close(() => {
+            console.log('Database connection closed')
+        })
+    } catch (error) {
+        console.error(error)
+    }
 }
 //disconnect()
 
@@ -83,7 +87,7 @@ const todoListSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    creator: {
+    creatorId: {
         type: String,
         required: true
     },
