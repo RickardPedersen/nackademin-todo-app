@@ -31,81 +31,103 @@ describe('Todo List Model', function() {
         result.should.have.property('updatedAt')
     })
 
-    it('should get todo list by _id', async function() {
+    it('should get todo list by id', async function() {
         // Arrange
         const listToBefound = await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
         await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
         await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
 
         // Act
-        const returnedList = await todoListModel.getTodoList(listToBefound._id.toString())
+        const returnedList = await todoListModel.getTodoList(listToBefound._id)
 
         // Assert
         returnedList.should.be.an('object')
         returnedList._id.toString().should.equal(listToBefound._id.toString())
     })
 
-    it('should return users todo lists or all todo lists if admin', async function() {
+    it('should return all todos', async function() {
         // Arrange
-        const user = {
-            userId: 'jhaksdgfajhsdfaksjd',
-            role: 'user',
-            isAdmin() { return this.role === 'admin' }
-        }
+        await todoListModel.createTodoList('Test List', 'poisufghopdisfghjdfg')
+        await todoListModel.createTodoList('Test List', 'cvbncvbnpoidghujos')
+        await todoListModel.createTodoList('Test List', 'kjlghnlkdgfjhnlkdh')
+        await todoListModel.createTodoList('Test List', '98fh7frho8a8lw473rfjaw')
+        await todoListModel.createTodoList('Test List', 'klsdjfghlsk43543rt4')
 
-        const admin = {
-            userId: 'yiuoashdflkasjdf',
-            role: 'admin',
-            isAdmin() { return this.role === 'admin' }
-        }
+        // Act
+        const todoLists = await todoListModel.getAllTodoLists()
 
-        await todoListModel.createTodoList('Test List', user.userId)
-        await todoListModel.createTodoList('Test List', user.userId)
-        await todoListModel.createTodoList('Test List', admin.userId)
-        await todoListModel.createTodoList('Test List', admin.userId)
+        // Assert
+        todoLists.should.be.an('array')
+        todoLists.length.should.equal(5)
+    })
+
+    it('should return users todo lists', async function() {
+        // Arrange
+        const userId = 'jhaksdgfajhsdfaksjd'
+
+        await todoListModel.createTodoList('Test List', userId)
+        await todoListModel.createTodoList('Test List', userId)
+        await todoListModel.createTodoList('Test List', 'akljdfshgaldskjf')
+        await todoListModel.createTodoList('Test List', 'asldkjfhalksdhflkjahdsf')
         await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
 
         // Act
-        const userLists = await todoListModel.getTodoLists(user)
-        const adminLists = await todoListModel.getTodoLists(admin)
+        const todoLists = await todoListModel.getUsersTodoLists(userId)
 
         // Assert
-        userLists.should.be.an('array')
-        userLists.length.should.equal(2)
-        adminLists.should.be.an('array')
-        adminLists.length.should.equal(5)
+        todoLists.should.be.an('array')
+        todoLists.length.should.equal(2)
     })
 
-    it('should count number of todolists', async function() {
+    it('should count all todo lists', async () => {
         // Arrange
-        const user = {
-            userId: 'jhaksdgfajhsdfaksjd',
-            role: 'user',
-            isAdmin() { return this.role === 'admin' }
-        }
-
-        const admin = {
-            userId: 'yiuoashdflkasjdf',
-            role: 'admin',
-            isAdmin() { return this.role === 'admin' }
-        }
-
-        await todoListModel.createTodoList('Test List', user.userId)
-        await todoListModel.createTodoList('Test List', user.userId)
-        await todoListModel.createTodoList('Test List', user.userId)
-        await todoListModel.createTodoList('Test List', admin.userId)
+        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
+        await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
+        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
+        await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
         await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
         await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
 
         // Act
-        const numberOfUserLists = await todoListModel.countTodoLists(user)
-        const numberOfAdminLists = await todoListModel.countTodoLists(admin)
+        const numberOfTodoLists = await todoListModel.countAllTodoLists()
 
         // Assert
-        numberOfUserLists.should.be.a('number')
-        numberOfUserLists.should.equal(3)
-        numberOfAdminLists.should.be.a('number')
-        numberOfAdminLists.should.equal(6)
+        numberOfTodoLists.should.be.a('number')
+        numberOfTodoLists.should.equal(6)
+    })
+
+    it('should count users todo lists', async function() {
+        // Arrange
+        const userId = 'jhaksdgfajhsdfaksjd'
+
+        await todoListModel.createTodoList('Test List', userId)
+        await todoListModel.createTodoList('Test List', userId)
+        await todoListModel.createTodoList('Test List', userId)
+        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
+        await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
+
+        // Act
+        const numberOfTodoLists = await todoListModel.countUsersTodoLists(userId)
+
+        // Assert
+        numberOfTodoLists.should.be.a('number')
+        numberOfTodoLists.should.equal(3)
+    })
+
+    it('should edit todo list title', async function() {
+        // Arrange
+        const newTodoList = await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
+        const updatedTitle = 'Updated Title'
+
+        // Act
+        const updatedTodoList = await todoListModel.editTodoList(newTodoList._id, updatedTitle)
+
+        // Assert
+        updatedTodoList.should.be.an('object')
+        updatedTodoList._id.toString().should.equal(newTodoList._id.toString())
+        updatedTodoList.should.have.property('title')
+        updatedTodoList.title.should.not.equal(newTodoList.title)
+        updatedTodoList.title.should.equal(updatedTitle)
     })
 
     after(async function() {

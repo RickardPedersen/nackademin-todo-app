@@ -1,11 +1,5 @@
 const {todoList} = require('../database/dbSetup')
 
-function getQuery(user) {
-    let query = {}
-    if (!user.isAdmin()) { query.userIds = { $in: [user.userId]} }
-    return query
-}
-
 module.exports = {
     clear: async () => {
         try {
@@ -27,25 +21,44 @@ module.exports = {
             console.error(error)
         }
     },
+    getAllTodoLists: async () => {
+        try {
+            return await todoList.find({})
+        } catch (error) {
+            console.error(error)
+        }
+    },
     getTodoList: async (id) => {
         try {
-            return await todoList.findOne({_id: id})
+            return await todoList.findById(id)
         } catch (error) {
             console.error(error)
         }
     },
-    getTodoLists: async (user) => {
+    getUsersTodoLists: async (userId) => {
         try {
-            const query = getQuery(user) 
-            return await todoList.find(query)
+            return await todoList.find({ userIds: { $in: [ userId ] } })
         } catch (error) {
             console.error(error)
         }
     },
-    countTodoLists: async (user) => {
+    countAllTodoLists: async () => {
         try {
-            const query = getQuery(user)
-            return await todoList.countDocuments(query)
+            return await todoList.countDocuments({})
+        } catch (error) {
+            console.error(error)
+        }
+    },
+    countUsersTodoLists: async (userId) => {
+        try {
+            return await todoList.countDocuments({ userIds: { $in: [ userId ] } })
+        } catch (error) {
+            console.error(error)
+        }
+    },
+    editTodoList: async (id, title) => {
+        try {
+            return await todoList.findByIdAndUpdate(id, { title }, { useFindAndModify: false, new: true })
         } catch (error) {
             console.error(error)
         }
