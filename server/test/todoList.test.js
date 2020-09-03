@@ -76,6 +76,38 @@ describe('Todo List Model', function() {
         adminLists.length.should.equal(5)
     })
 
+    it('should count number of todolists', async function() {
+        // Arrange
+        const user = {
+            userId: 'jhaksdgfajhsdfaksjd',
+            role: 'user',
+            isAdmin() { return this.role === 'admin' }
+        }
+
+        const admin = {
+            userId: 'yiuoashdflkasjdf',
+            role: 'admin',
+            isAdmin() { return this.role === 'admin' }
+        }
+
+        await todoListModel.createTodoList('Test List', user.userId)
+        await todoListModel.createTodoList('Test List', user.userId)
+        await todoListModel.createTodoList('Test List', user.userId)
+        await todoListModel.createTodoList('Test List', admin.userId)
+        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
+        await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
+
+        // Act
+        const numberOfUserLists = await todoListModel.countTodoLists(user)
+        const numberOfAdminLists = await todoListModel.countTodoLists(admin)
+
+        // Assert
+        numberOfUserLists.should.be.a('number')
+        numberOfUserLists.should.equal(3)
+        numberOfAdminLists.should.be.a('number')
+        numberOfAdminLists.should.equal(6)
+    })
+
     after(async function() {
         await disconnect()
     })

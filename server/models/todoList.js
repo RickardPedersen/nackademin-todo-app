@@ -41,5 +41,13 @@ module.exports = {
         } catch (error) {
             console.error(error)
         }
+    },
+    countTodoLists: async (user) => {
+        try {
+            const query = getQuery(user)
+            return await todoList.countDocuments(query)
+        } catch (error) {
+            console.error(error)
+        }
     }
 }
