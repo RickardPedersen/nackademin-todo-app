@@ -28,7 +28,8 @@ module.exports = {
             ...payload,
             owns(document) { return document.userId === this.userId },
             is(user) { return user._id.toString() === this.userId },
-            isAdmin() { return this.role === 'admin' } }
+            isAdmin() { return this.role === 'admin' }
+        }
     },
     getUser: async (filter) => {
         try {

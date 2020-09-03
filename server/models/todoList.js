@@ -1,5 +1,11 @@
 const {todoList} = require('../database/dbSetup')
 
+function getQuery(user) {
+    let query = {}
+    if (!user.isAdmin()) { query.userIds = { $in: [user.userId]} }
+    return query
+}
+
 module.exports = {
     clear: async () => {
         try {
@@ -24,6 +30,14 @@ module.exports = {
     getTodoList: async (id) => {
         try {
             return await todoList.findOne({_id: id})
+        } catch (error) {
+            console.error(error)
+        }
+    },
+    getTodoLists: async (user) => {
+        try {
+            const query = getQuery(user) 
+            return await todoList.find(query)
         } catch (error) {
             console.error(error)
         }
