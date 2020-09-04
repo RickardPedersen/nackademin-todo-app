@@ -35,8 +35,6 @@ describe('Todo List Model', function() {
     it('should get todo list by id', async function() {
         // Arrange
         const listToBefound = await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
-        await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
-        await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
 
         // Act
         const returnedList = await todoListModel.getTodoList(listToBefound._id)
@@ -48,29 +46,29 @@ describe('Todo List Model', function() {
 
     it('should return all todos', async function() {
         // Arrange
-        await todoListModel.createTodoList('Test List', 'poisufghopdisfghjdfg')
-        await todoListModel.createTodoList('Test List', 'cvbncvbnpoidghujos')
-        await todoListModel.createTodoList('Test List', 'kjlghnlkdgfjhnlkdh')
-        await todoListModel.createTodoList('Test List', '98fh7frho8a8lw473rfjaw')
-        await todoListModel.createTodoList('Test List', 'klsdjfghlsk43543rt4')
+        for (let i = 0, noOfTodoLists = 10; i < noOfTodoLists; i++) {
+            await todoListModel.createTodoList('Test List', 'poisufghopdisfghjdfg')
+        }
 
         // Act
         const todoLists = await todoListModel.getAllTodoLists()
 
         // Assert
         todoLists.should.be.an('array')
-        todoLists.length.should.equal(5)
+        todoLists.length.should.equal(10)
     })
 
-    it('should return users todo lists', async function() {
+    it('should only return users todo lists', async function() {
         // Arrange
         const userId = 'jhaksdgfajhsdfaksjd'
 
-        await todoListModel.createTodoList('Test List', userId)
-        await todoListModel.createTodoList('Test List', userId)
-        await todoListModel.createTodoList('Test List', 'akljdfshgaldskjf')
-        await todoListModel.createTodoList('Test List', 'asldkjfhalksdhflkjahdsf')
-        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
+        for (let i = 0, noOfTodoLists = 10, noOfUserLists = 2; i < noOfTodoLists; i++) {
+            if (i < noOfUserLists) {
+                await todoListModel.createTodoList('Test List', userId)
+            } else {
+                await todoListModel.createTodoList('Test List', 'akljdfshgaldskjf')
+            }
+        }
 
         // Act
         const todoLists = await todoListModel.getUsersTodoLists(userId)
@@ -82,30 +80,29 @@ describe('Todo List Model', function() {
 
     it('should count all todo lists', async () => {
         // Arrange
-        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
-        await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
-        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
-        await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
-        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
-        await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
+        for (let i = 0, noOfTodoLists = 10; i < noOfTodoLists; i++) {
+            await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
+        }
 
         // Act
         const numberOfTodoLists = await todoListModel.countAllTodoLists()
 
         // Assert
         numberOfTodoLists.should.be.a('number')
-        numberOfTodoLists.should.equal(6)
+        numberOfTodoLists.should.equal(10)
     })
 
     it('should count users todo lists', async function() {
         // Arrange
         const userId = 'jhaksdgfajhsdfaksjd'
 
-        await todoListModel.createTodoList('Test List', userId)
-        await todoListModel.createTodoList('Test List', userId)
-        await todoListModel.createTodoList('Test List', userId)
-        await todoListModel.createTodoList('Test List', 'kljashdfliaskdufyl')
-        await todoListModel.createTodoList('Test List', 'pghsdfigosidfug')
+        for (let i = 0, noOfTodoLists = 10, noOfUserLists = 3; i < noOfTodoLists; i++) {
+            if (i < noOfUserLists) {
+                await todoListModel.createTodoList('Test List', userId)
+            } else {
+                await todoListModel.createTodoList('Test List', 'akljdfshgaldskjf')
+            }
+        }
 
         // Act
         const numberOfTodoLists = await todoListModel.countUsersTodoLists(userId)
