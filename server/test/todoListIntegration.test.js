@@ -149,6 +149,30 @@ describe('Todo List Integration', function() {
         res2.body.userIds.should.not.include(this.test.adminId)
     })
 
+    it('should delete a todo list', async function() {
+        // Arrange
+        const newList = await todoListModel.createTodoList('Test List', this.test.userId)
+        const id = newList._id.toString()
+
+        // Act
+        const res = await request(app)
+            .delete(`/api/todoLists/${id}`)
+            .set('Authorization', `Bearer ${this.test.userToken}`)
+            .set('Content-Type', 'application/json')
+        
+        const removed = await request(app)
+            .get(`/api/todoLists/${id}`)
+            .set('Authorization', `Bearer ${this.test.userToken}`)
+            .set('Content-Type', 'application/json')
+        
+        res.should.have.status(200)
+        res.should.be.json
+        res.body.should.be.an('object')
+        res.body._id.should.equal(id)
+
+        removed.should.have.status(404)
+    })
+
     after(async function() {
         await disconnect()
     })

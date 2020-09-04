@@ -19,6 +19,7 @@ module.exports = {
     },
     getTodoList: async (req, res) => {
         const todoList = await model.getTodoList(req.params.id)
+        if (!todoList) { return res.sendStatus(404) }
         if (!req.user.isAdmin() && !req.user.isListMember(todoList)) { return res.sendStatus(403) }
         res.status(200).json(todoList)
     },
@@ -30,6 +31,7 @@ module.exports = {
             }
 
         const todoList = await model.getTodoList(req.params.id)
+        if (!todoList) { return res.sendStatus(404) }
         if (!req.user.isAdmin() && !req.user.isListCreator(todoList)) { return res.sendStatus(403) }
 
         let resObject = {}
@@ -38,5 +40,12 @@ module.exports = {
         if (req.body.hasOwnProperty('removeMember')) { resObject = await model.removeMember(req.params.id, req.body.removeMember)}
 
         res.status(200).json(resObject)
+    },
+    deleteTodoList: async (req, res) => {
+        const todoList = await model.getTodoList(req.params.id)
+        if (!todoList) { return res.sendStatus(404) }
+        if (!req.user.isAdmin() && !req.user.isListCreator(todoList)) { return res.sendStatus(403) }
+        const result = await model.deleteTodoList(req.params.id)
+        res.status(200).json(result)
     }
 }

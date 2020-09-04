@@ -8,6 +8,6 @@ router.post('/', user, controller.postTodoList)
 router.get('/', user, controller.getTodoLists)
 router.get('/:id', user, controller.getTodoList)
 router.patch('/:id', user, controller.editTodoList)
-//router.delete('/:id', user, controller.deleteTodo)
+router.delete('/:id', user, controller.deleteTodoList)
 
 module.exports = router
