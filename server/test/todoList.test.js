@@ -141,6 +141,22 @@ describe('Todo List Model', function() {
         updatedTodoList.userIds.should.include(newMemberId)
     })
 
+    it('should remove member from todo list', async function() {
+        // Arrange
+        const newTodoList = await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
+        const newMemberId = 'hgisdfuogsdflgksjh'
+
+        // Act
+        const updatedTodoList = await todoListModel.addMember(newTodoList._id, newMemberId)
+        const removedFromList = await todoListModel.removeMember(newTodoList._id, newMemberId)
+
+        // Assert
+        updatedTodoList.should.be.an('object')
+        updatedTodoList.userIds.should.include(newMemberId)
+        removedFromList.should.be.an('object')
+        removedFromList.userIds.should.not.include(newMemberId)
+    })
+
     it('should delete the todo list', async function() {
         // Arrange
         const newTodoList = await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')

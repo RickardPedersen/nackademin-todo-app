@@ -70,6 +70,13 @@ module.exports = {
             console.error(error)
         }
     },
+    removeMember: async (id, userId) => {
+        try {
+            return await todoList.findByIdAndUpdate(id, { $pull: { userIds: userId } }, { useFindAndModify: false, new: true })
+        } catch (error) {
+            console.error(error)
+        }
+    },
     deleteTodoList: async (id) => {
         try {
             return await todoList.findByIdAndDelete(id)
