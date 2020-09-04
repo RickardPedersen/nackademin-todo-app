@@ -62,5 +62,12 @@ module.exports = {
         } catch (error) {
             console.error(error)
         }
+    },
+    deleteTodoList: async (id) => {
+        try {
+            return await todoList.findByIdAndDelete(id)
+        } catch (error) {
+            console.error(error)
+        }
     }
 }

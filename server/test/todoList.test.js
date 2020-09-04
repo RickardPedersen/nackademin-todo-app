@@ -2,6 +2,7 @@ require('dotenv').config()
 const {connect, disconnect} = require('../database/dbSetup')
 const todoListModel = require('../models/todoList')
 const chai = require('chai')
+const { expect } = require('chai')
 chai.should()
 
 describe('Todo List Model', function() {
@@ -128,6 +129,20 @@ describe('Todo List Model', function() {
         updatedTodoList.should.have.property('title')
         updatedTodoList.title.should.not.equal(newTodoList.title)
         updatedTodoList.title.should.equal(updatedTitle)
+    })
+
+    it('should delete the todo list', async function() {
+        // Arrange
+        const newTodoList = await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
+
+        // Act
+        const deletedTodoList = await todoListModel.deleteTodoList(newTodoList._id)
+        const testGetTodoList = await todoListModel.getTodoList(newTodoList._id)
+
+        // Assert
+        deletedTodoList.should.be.an('object')
+        deletedTodoList._id.toString().should.equal(newTodoList._id.toString())
+        expect(testGetTodoList).to.be.null
     })
 
     after(async function() {
