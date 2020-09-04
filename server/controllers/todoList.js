@@ -21,5 +21,22 @@ module.exports = {
         const todoList = await model.getTodoList(req.params.id)
         if (!req.user.isAdmin() && !req.user.isListMember(todoList)) { return res.sendStatus(403) }
         res.status(200).json(todoList)
+    },
+    editTodoList: async (req, res) => {
+        if (!req.body.hasOwnProperty('title') &&
+            !req.body.hasOwnProperty('addMember') &&
+            !req.body.hasOwnProperty('removeMember')) {
+                return res.sendStatus(400)
+            }
+
+        const todoList = await model.getTodoList(req.params.id)
+        if (!req.user.isAdmin() && !req.user.isListCreator(todoList)) { return res.sendStatus(403) }
+
+        let resObject = {}
+        if (req.body.hasOwnProperty('title')) { resObject = await model.editTodoList(req.params.id, req.body.title)}
+        if (req.body.hasOwnProperty('addMember')) { resObject = await model.addMember(req.params.id, req.body.addMember)}
+        if (req.body.hasOwnProperty('removeMember')) { resObject = await model.removeMember(req.params.id, req.body.removeMember)}
+
+        res.status(200).json(resObject)
     }
 }

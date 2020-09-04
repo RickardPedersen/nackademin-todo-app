@@ -41,7 +41,8 @@ module.exports = {
                 owns(document) { return document.userId === this.userId },
                 is(user) { return user._id.toString() === this.userId },
                 isAdmin() { return this.role === 'admin' },
-                isListMember(todoList) { return todoList.userIds.includes(this.userId) }
+                isListMember(todoList) { return todoList.userIds.includes(this.userId) },
+                isListCreator(todoList) { return todoList.creatorId === this.userId }
             } 
         } catch (error) {
             console.error(error)

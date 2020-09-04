@@ -108,6 +108,47 @@ describe('Todo List Integration', function() {
         res.body._id.should.equal(id)
     })
 
+    it('should edit todo list', async function() {
+        // Arrange
+        const newList = await todoListModel.createTodoList('Test List', this.test.userId)
+        const id = newList._id.toString()
+        const newTitle = 'Updated Title'
+
+        // Act
+        const fields = {title: newTitle, addMember: this.test.adminId}
+        const res = await request(app)
+            .patch(`/api/todoLists/${id}`)
+            .set('Authorization', `Bearer ${this.test.userToken}`)
+            .set('Content-Type', 'application/json')
+            .send(fields)
+        
+        const fields2 = {removeMember: this.test.adminId}
+        const res2 = await request(app)
+            .patch(`/api/todoLists/${id}`)
+            .set('Authorization', `Bearer ${this.test.adminToken}`)
+            .set('Content-Type', 'application/json')
+            .send(fields2)
+        
+        // Assert
+        res.should.have.status(200)
+        res.should.be.json
+        res.body.should.be.an('object')
+        res.body._id.should.equal(id)
+        res.body.should.have.property('title')
+        res.body.title.should.equal(newTitle)
+        res.body.should.have.property('userIds')
+        res.body.userIds.should.include(this.test.userId)
+        res.body.userIds.should.include(this.test.adminId)
+
+        res2.should.have.status(200)
+        res2.should.be.json
+        res2.body.should.be.an('object')
+        res2.body._id.should.equal(id)
+        res2.body.should.have.property('userIds')
+        res2.body.userIds.should.include(this.test.userId)
+        res2.body.userIds.should.not.include(this.test.adminId)
+    })
+
     after(async function() {
         await disconnect()
     })
