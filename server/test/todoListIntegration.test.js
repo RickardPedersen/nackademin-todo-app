@@ -92,6 +92,22 @@ describe('Todo List Integration', function() {
         res.body.count.should.equal(res.body.data.length)
     })
 
+    it('should get todo list by id', async function() {
+        // Arrange
+        const newList = await todoListModel.createTodoList('Test List', this.test.userId)
+        const id = newList._id.toString()
+
+        const res = await request(app)
+            .get(`/api/todoLists/${id}`)
+            .set('Authorization', `Bearer ${this.test.userToken}`)
+            .set('Content-Type', 'application/json')
+
+        res.should.have.status(200)
+        res.should.be.json
+        res.body.should.be.an('object')
+        res.body._id.should.equal(id)
+    })
+
     after(async function() {
         await disconnect()
     })

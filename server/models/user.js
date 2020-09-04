@@ -5,7 +5,10 @@ const {user} = require('../database/dbSetup')
 module.exports = {
     clearUsers: async () => {
         try {
-            await user.collection.drop()
+            const collectionList = await user.db.db.listCollections({name: user.collection.name}).toArray()
+            if (collectionList.length !== 0) {
+                await user.collection.drop()
+            }          
         } catch (error) {
             console.error(error)
         }
@@ -37,7 +40,8 @@ module.exports = {
                 ...payload,
                 owns(document) { return document.userId === this.userId },
                 is(user) { return user._id.toString() === this.userId },
-                isAdmin() { return this.role === 'admin' }
+                isAdmin() { return this.role === 'admin' },
+                isListMember(todoList) { return todoList.userIds.includes(this.userId) }
             } 
         } catch (error) {
             console.error(error)

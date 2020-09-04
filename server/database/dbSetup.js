@@ -1,9 +1,7 @@
 const mongoose = require('mongoose')
-//mongoose.connect('mongodb://localhost:27017/TodoAppDB', { useNewUrlParser: true, useUnifiedTopology: true })
 
 async function connect() {
     try {
-        //console.log(process.env.ENVIRONMENT)
         switch (process.env.ENVIRONMENT) {
             case 'dev':
                 await mongoose.connect('mongodb://localhost:27017/TodoAppDB_dev', { useNewUrlParser: true, useUnifiedTopology: true })
@@ -24,7 +22,6 @@ async function connect() {
         console.error(error)
     }
 }
-//connect()
 
 async function disconnect() {
     try {
@@ -35,9 +32,7 @@ async function disconnect() {
         console.error(error)
     }
 }
-//disconnect()
 
-//const db = mongoose.connection
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'))
 mongoose.connection.once('open', function() {
   console.log(`Connected to ${process.env.ENVIRONMENT} database`)
