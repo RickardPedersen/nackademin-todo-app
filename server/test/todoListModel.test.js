@@ -44,7 +44,7 @@ describe('Todo List Model', function() {
         returnedList._id.toString().should.equal(listToBefound._id.toString())
     })
 
-    it('should return all todos', async function() {
+    it('should return all todo lists', async function() {
         // Arrange
         for (let i = 0, noOfTodoLists = 10; i < noOfTodoLists; i++) {
             await todoListModel.createTodoList('Test List', 'poisufghopdisfghjdfg')
