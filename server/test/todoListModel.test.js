@@ -11,7 +11,7 @@ describe('Todo List Model', function() {
     })
 
     beforeEach(async function() {
-        await todoListModel.clear()
+        await todoListModel.clearTodoLists()
     })
 
     it('should create a todo list', async function() {

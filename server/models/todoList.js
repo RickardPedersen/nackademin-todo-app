@@ -1,7 +1,7 @@
 const {todoList} = require('../database/dbSetup')
 
 module.exports = {
-    clear: async () => {
+    clearTodoLists: async () => {
         try {
             await todoList.collection.drop()
         } catch (error) {

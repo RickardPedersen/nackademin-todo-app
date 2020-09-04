@@ -1,7 +1,15 @@
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const {user} = require('../database/dbSetup')
 
 module.exports = {
+    clearUsers: async () => {
+        try {
+            await user.collection.drop()
+        } catch (error) {
+            console.error(error)
+        }
+    },
     countUsers: async (filter) => {
         try {
             return await user.countDocuments(filter)
@@ -23,12 +31,16 @@ module.exports = {
         }
     },
     verifyToken: async (token) => {
-        const payload = jwt.verify(token, process.env.SECRET)
-        return {
-            ...payload,
-            owns(document) { return document.userId === this.userId },
-            is(user) { return user._id.toString() === this.userId },
-            isAdmin() { return this.role === 'admin' }
+        try {
+            const payload = jwt.verify(token, process.env.SECRET)
+            return {
+                ...payload,
+                owns(document) { return document.userId === this.userId },
+                is(user) { return user._id.toString() === this.userId },
+                isAdmin() { return this.role === 'admin' }
+            } 
+        } catch (error) {
+            console.error(error)
         }
     },
     getUser: async (filter) => {
@@ -39,13 +51,35 @@ module.exports = {
             return false
         }
     },
-    addUser: async (userObject) => {
+    addUser: async (username, password, role) => {
         try {
-            await user.create(userObject)
-            return true
+            const userObject = {
+                username,
+                password: bcrypt.hashSync(password, 10),
+                role
+            }
+
+            return await user.create(userObject)
         } catch (error) {
-            console.log(error)
-            return false
+            console.error(error)
+        }
+    },
+    authenticateUser: async (username, password) => {
+        try {
+            const userDoc = await user.findOne({username})
+            if (!userDoc) { return { success: false, error: 'User not foud' } }
+
+            const correctPassword = bcrypt.compareSync(password, userDoc.password)
+            if (!correctPassword) { return { success: false, error: 'User not foud' } }
+
+            const payload = { userId: userDoc._id, role: userDoc.role }
+            return {
+                success: true,
+                //token: createToken({ userId: userDoc._id, role: userDoc.role })
+                token: jwt.sign(payload, process.env.SECRET, { expiresIn:'1h' })
+            }
+        } catch (error) {
+            console.error(error)
         }
     },
     editUser: async (id, updatedUser) => {
