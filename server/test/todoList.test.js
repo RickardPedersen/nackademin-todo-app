@@ -128,6 +128,19 @@ describe('Todo List Model', function() {
         updatedTodoList.title.should.equal(updatedTitle)
     })
 
+    it('should add member to todo list', async function() {
+        // Arrange
+        const newTodoList = await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
+        const newMemberId = 'hgisdfuogsdflgksjh'
+
+        // Act
+        const updatedTodoList = await todoListModel.addMember(newTodoList._id, newMemberId)
+
+        // Assert
+        updatedTodoList.should.be.an('object')
+        updatedTodoList.userIds.should.include(newMemberId)
+    })
+
     it('should delete the todo list', async function() {
         // Arrange
         const newTodoList = await todoListModel.createTodoList('Test List', 'jhaksdgfajhsdfaksjd')
