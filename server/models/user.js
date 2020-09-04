@@ -67,10 +67,10 @@ module.exports = {
     authenticateUser: async (username, password) => {
         try {
             const userDoc = await user.findOne({username})
-            if (!userDoc) { return { success: false, error: 'User not foud' } }
+            if (!userDoc) { return { success: false, error: 'User not found' } }
 
             const correctPassword = bcrypt.compareSync(password, userDoc.password)
-            if (!correctPassword) { return { success: false, error: 'User not foud' } }
+            if (!correctPassword) { return { success: false, error: 'Wrong password' } }
 
             const payload = { userId: userDoc._id, role: userDoc.role }
             return {
