@@ -1,6 +1,7 @@
 require('dotenv').config()
 const {connect, disconnect} = require('../database/dbSetup')
 const todoListModel = require('../models/todoList')
+const todoModel = require('../models/todo')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
@@ -106,6 +107,37 @@ describe('Todo List Integration', function() {
         res.should.be.json
         res.body.should.be.an('object')
         res.body._id.should.equal(id)
+    })
+
+    it('should get todos by listId', async function() {
+        // Arrange
+        const newList = await todoListModel.createTodoList('Test List', this.test.userId)
+        const listId = newList._id.toString()
+
+        const title = 'Test List'
+        const userId = 'asdasdasdasdasd'
+
+        for (let i = 0, noOfTodos = 15, noOfMatchingTodos = 11; i < noOfTodos; i++) {
+            if (i < noOfMatchingTodos) {
+                await todoModel.createTodo(title, userId, listId)
+            } else {
+                await todoModel.createTodo(title, userId, 'ajkldfhaldskf')
+            }
+        }
+
+        // Act
+        const res = await request(app)
+            .get(`/api/todoLists/${listId}/todos`)
+            .set('Authorization', `Bearer ${this.test.userToken}`)
+            .set('Content-Type', 'application/json')
+
+        // Assert
+        res.should.have.status(200)
+        res.should.be.json
+        res.body.count.should.be.a('number')
+        res.body.data.should.be.an('array')
+        res.body.count.should.equal(11)
+        res.body.data.length.should.equal(10)
     })
 
     it('should edit todo list', async function() {

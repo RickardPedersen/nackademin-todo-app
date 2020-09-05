@@ -6,6 +6,7 @@ const router = new Router()
 
 router.get('/', user, controller.getTodoLists)
 router.get('/:id', user, controller.getTodoList)
+router.get('/:id/todos', user, controller.getTodosByListId)
 router.post('/', user, controller.postTodoList)
 router.patch('/:id', user, controller.editTodoList)
 router.delete('/:id', user, controller.deleteTodoList)

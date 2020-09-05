@@ -39,7 +39,7 @@ describe('Todo Model', function() {
         const title = 'Test List'
         const userId = 'asdasdasdasdasd'
         const listId = 'kshjdfghlskdfjgh'
-        for (let i = 0, noOfTodos = 10, noOfMatchingTodos = 3; i < noOfTodos; i++) {
+        for (let i = 0, noOfTodos = 10, noOfMatchingTodos = 5; i < noOfTodos; i++) {
             if (i < noOfMatchingTodos) {
                 await todoModel.createTodo(title, userId, listId)
             } else {
@@ -52,7 +52,7 @@ describe('Todo Model', function() {
 
         // Assert
         results.should.be.an('array')
-        results.length.should.equal(3)
+        results.length.should.equal(5)
         for (let todo of results) {
             todo.listId.should.equal(listId)
         }

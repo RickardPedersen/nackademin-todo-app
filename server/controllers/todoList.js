@@ -1,4 +1,5 @@
 const model = require('../models/todoList')
+const todoModel = require('../models/todo')
 
 module.exports = {
     postTodoList: async (req, res) => {
@@ -30,6 +31,34 @@ module.exports = {
         if (!todoList) { return res.sendStatus(404) }
         if (!req.user.isAdmin() && !req.user.isListMember(todoList)) { return res.sendStatus(403) }
         res.status(200).json(todoList)
+    },
+    getTodosByListId: async (req, res) => {
+        try {
+            const todoList = await model.getTodoList(req.params.id)
+            if (!todoList) { return res.sendStatus(404) }
+            if (!req.user.isAdmin() && !req.user.isListMember(todoList)) { return res.sendStatus(403) }
+    
+            const count = await todoModel.countTodosByListId(req.params.id, req.query.filter)
+            const todos = await todoModel.getTodosByListId(
+                req.params.id,
+                req.query.sortBy,
+                req.query.skip,
+                req.query.limit,
+                req.query.descending,
+                req.query.filter
+            )
+
+            const status = count !== 0 ? 200 : 404
+            const resObject = {
+                count,
+                data: todos
+            }
+
+            res.status(status).json(resObject)
+        } catch (error) {
+            console.error(error)
+            res.sendStatus(500)
+        }
     },
     editTodoList: async (req, res) => {
         if (!req.body.hasOwnProperty('title') &&

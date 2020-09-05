@@ -1,5 +1,21 @@
 const {todo} = require('../database/dbSetup')
 
+function getSort(sortBy, order) {
+    switch (sortBy) {
+        case 'title':
+            return { title: order }
+
+        case 'createdAt':
+            return { createdAt: order }
+
+        case 'updatedAt':
+            return { updatedAt: order }
+
+        default:
+            return { title: order }
+    }
+}
+
 module.exports = {
     clearTodos: async () => {
         try {
@@ -15,13 +31,22 @@ module.exports = {
             console.error(error)
         }
     },
-    countTodos: async (filter) => {
+    countTodos: async (filter = '') => {
         try {
-            return await todo.countDocuments(filter)
+            const query = filter ? { title: new RegExp(filter, 'i') } : {}
+            return await todo.countDocuments(query)
         } catch (error) {
             console.log(error)
             return false
         }   
+    },
+    countTodosByListId: async (listId, filter = '') => {
+        try {
+            const query = filter ? { listId, title: new RegExp(filter, 'i') } : { listId }
+            return await todo.countDocuments(query)
+        } catch (error) {
+            console.error(error)
+        }
     },
     getTodos: async (sortBy, skip, limit, filter) => {
         try {
@@ -35,11 +60,20 @@ module.exports = {
             return false
         }
     },
-    getTodosByListId: async (listId) => {
+    getTodosByListId: async (listId, sortBy = 'title', skip = 0, limit = 10, descending = 'false', filter = '') => {
         try {
-            return await todo.find({listId})   
+            const query = filter ? { listId, title: new RegExp(filter, 'i') } : { listId }
+            const order = descending === 'true' ? -1 : 1
+            const sortQuery = getSort(sortBy, order)
+
+            return await todo.find(query)
+                .collation({ locale: "sv" })
+                .sort(sortQuery)
+                .skip(parseInt(skip))
+                .limit(parseInt(limit))
         } catch (error) {
-            console.error(error)
+            //console.error(error)
+            throw error
         }
     },
     getTodo: async (id) => {
