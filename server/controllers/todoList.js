@@ -7,15 +7,23 @@ module.exports = {
         res.status(201).json(newList)
     },
     getTodoLists: async (req, res) => {
-        if (req.user.isAdmin()) {
-            const count = await model.countAllTodoLists()
-            const todoLists = await model.getAllTodoLists()
-            res.status(200).json({count, data: todoLists})
-        } else {
-            const count = await model.countUsersTodoLists(req.user.userId)
-            const todoLists = await model.getUsersTodoLists(req.user.userId)
-            res.status(200).json({count, data: todoLists})
+        let resObject = {
+            count: 0,
+            data: []
         }
+        let status = 200
+
+        if (req.user.isAdmin()) {
+            resObject.count = await model.countAllTodoLists()
+            resObject.data = await model.getAllTodoLists()
+        } else {
+            resObject.count = await model.countUsersTodoLists(req.user.userId)
+            resObject.data = await model.getUsersTodoLists(req.user.userId)
+        }
+
+        if (resObject.data.length === 0) { status = 404 }
+
+        res.status(status).json(resObject)
     },
     getTodoList: async (req, res) => {
         const todoList = await model.getTodoList(req.params.id)
