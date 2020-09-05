@@ -18,9 +18,9 @@ class TodoRequests {
         }
     }
 
-    static async getAllUsers(order, skip, limit, sortBy, filter) {
+    static async getAllUsers(descending, skip, limit, sortBy, filter) {
         try {
-            const res = await axios.get(`${url}?order=${order}&skip=${skip}&limit=${limit}&sortBy=${sortBy}&filter=${filter}`, config)
+            const res = await axios.get(`${url}?descending=${descending}&skip=${skip}&limit=${limit}&sortBy=${sortBy}&filter=${filter}`, config)
             const data = res.data
             return data
         } catch (error) {

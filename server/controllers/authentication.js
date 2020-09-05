@@ -1,23 +1,22 @@
-const { getUser } = require('../models/user')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-
-function createToken(payload) {
-    return jwt.sign(payload, process.env.SECRET, { expiresIn:'1h' })
-}
+const userModel = require('../models/user')
 
 module.exports = {
     authenticateUser: async (req, res) => {
-        const caseInsensitiveUsername = new RegExp(`^${req.body.username}$` ,'i')
-        const user = await getUser({ username: caseInsensitiveUsername })
-        if (!user) { return res.sendStatus(404) } 
+        try {
+            const userObject = await userModel.authenticateUser(req.body.username, req.body.password)
 
-        const correctPassword = bcrypt.compareSync(req.body.password, user.password)
-        if (correctPassword) {
-            let token = createToken({ userId: user._id, role: user.role })
-            res.status(200).json(token)
-        } else {
-            res.status(403).send('Wrong Password')
+            if (userObject.success) {
+                res.status(200).json(userObject.token)
+            } else if (userObject.error === 'Wrong password') {
+                res.status(401).json(userObject.error)
+            } else if (userObject.error === 'Wrong username') {
+                res.status(401).json(userObject.error)
+            } else {
+                res.sendStatus(500)
+            }
+        } catch (error) {
+            console.error(error)
+            res.sendStatus(500)
         }
     },
     isLoggedIn: async (req, res) => {

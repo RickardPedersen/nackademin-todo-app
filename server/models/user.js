@@ -2,6 +2,22 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const {user} = require('../database/dbSetup')
 
+function getSort(sortBy, order) {
+    switch (sortBy) {
+        case 'username':
+            return { username: order }
+
+        case 'createdAt':
+            return { createdAt: order }
+
+        case 'updatedAt':
+            return { updatedAt: order }
+
+        default:
+            return { title: order }
+    }
+}
+
 module.exports = {
     clearUsers: async () => {
         try {
@@ -15,26 +31,30 @@ module.exports = {
             }          
         } catch (error) {
             console.error(error)
+            throw error
         }
     },
-    countUsers: async (filter) => {
+    countUsers: async (filter = '') => {
         try {
-            return await user.countDocuments(filter)
+            const query = filter ? { username: new RegExp(filter, 'i') } : {}
+            return await user.countDocuments(query)
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
         }   
     },
-    getAllUsers: async (sortBy, skip, limit, filter) => {
+    getAllUsers: async (sortBy = 'title', skip = 0, limit = 10, descending = 'false', filter = '') => {
         try {
-            return await user.find(filter)
+            const query = filter ? { username: new RegExp(filter, 'i') } : {}
+            const order = descending === 'true' ? -1 : 1
+            const sortQuery = getSort(sortBy, order)
+
+            return await user.find(query)
             .collation({ locale: "sv" })
-            .sort(sortBy)
+            .sort(sortQuery)
             .skip(parseInt(skip))
             .limit(parseInt(limit))
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
         }
     },
     verifyToken: async (token) => {
@@ -49,15 +69,21 @@ module.exports = {
                 isListCreator(todoList) { return todoList.creatorId === this.userId }
             } 
         } catch (error) {
-            console.error(error)
+            throw error
         }
     },
-    getUser: async (filter) => {
+    getUser: async (id) => {
         try {
-            return await user.findOne(filter)
+            return await user.findById(id)
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
+        }
+    },
+    getUserByUsername: async (username) => {
+        try {
+            return await user.findOne({ username })
+        } catch (error) {
+            throw error
         }
     },
     addUser: async (username, password, role) => {
@@ -70,13 +96,14 @@ module.exports = {
 
             return await user.create(userObject)
         } catch (error) {
-            console.error(error)
+            throw error
         }
     },
     authenticateUser: async (username, password) => {
         try {
-            const userDoc = await user.findOne({username})
-            if (!userDoc) { return { success: false, error: 'User not found' } }
+            const caseInsensitiveUsername = new RegExp(`^${username}$` ,'i')
+            const userDoc = await user.findOne({username: caseInsensitiveUsername})
+            if (!userDoc) { return { success: false, error: 'Wrong username' } }
 
             const correctPassword = bcrypt.compareSync(password, userDoc.password)
             if (!correctPassword) { return { success: false, error: 'Wrong password' } }
@@ -84,29 +111,24 @@ module.exports = {
             const payload = { userId: userDoc._id, role: userDoc.role }
             return {
                 success: true,
-                //token: createToken({ userId: userDoc._id, role: userDoc.role })
                 token: jwt.sign(payload, process.env.SECRET, { expiresIn:'1h' })
             }
         } catch (error) {
-            console.error(error)
+            throw error
         }
     },
-    editUser: async (id, updatedUser) => {
+    editUser: async (id, fields) => {
         try {
-            let updPost = await user.updateOne({ _id: id },{ $set: updatedUser })
-            return updPost.n
+            return await user.findByIdAndUpdate(id ,{ $set: fields }, { useFindAndModify: false, new: true })
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
         }
     },
     deleteUser: async (id) => {
         try {
-            let delUsers = await user.deleteOne({ _id: id })
-            return delUsers.n
+            return await user.findByIdAndDelete(id)
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
         }
     }
 }

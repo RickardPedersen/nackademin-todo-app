@@ -8,9 +8,9 @@ const config = {
 }
 
 class TodoRequests {
-    static async getAllTodos(order, skip, limit, sortBy, filter) {
+    static async getAllTodos(descending, skip, limit, sortBy, filter) {
         try {
-            const res = await axios.get(`${url}?order=${order}&skip=${skip}&limit=${limit}&sortBy=${sortBy}&filter=${filter}`, config)
+            const res = await axios.get(`${url}?descending=${descending}&skip=${skip}&limit=${limit}&sortBy=${sortBy}&filter=${filter}`, config)
             const data = res.data
             return data
         } catch (error) {
@@ -19,9 +19,9 @@ class TodoRequests {
         }
     }
 
-    static async getUsersTodos(userId, order, skip, limit, sortBy, filter) {
+    static async getUsersTodos(userId, descending, skip, limit, sortBy, filter) {
         try {
-            const res = await axios.get(`${userUrl}/${userId}/todos?order=${order}&skip=${skip}&limit=${limit}&sortBy=${sortBy}&filter=${filter}`, config)
+            const res = await axios.get(`${userUrl}/${userId}/todos?descending=${descending}&skip=${skip}&limit=${limit}&sortBy=${sortBy}&filter=${filter}`, config)
             const data = res.data
             return data
         } catch (error) {

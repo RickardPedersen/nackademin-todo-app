@@ -29,35 +29,61 @@ module.exports = {
             }          
         } catch (error) {
             console.error(error)
+            throw error
         }
     },
-    countTodos: async (filter = '') => {
+    countAllTodos: async (filter = '') => {
         try {
             const query = filter ? { title: new RegExp(filter, 'i') } : {}
             return await todo.countDocuments(query)
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
         }   
+    },
+    countUserTodos: async (userId, filter = '') => {
+        try {
+            const query = filter ? { userId, title: new RegExp(filter, 'i') } : { userId }
+            return await todo.countDocuments(query)
+        } catch (error) {
+            throw error
+        } 
     },
     countTodosByListId: async (listId, filter = '') => {
         try {
             const query = filter ? { listId, title: new RegExp(filter, 'i') } : { listId }
             return await todo.countDocuments(query)
         } catch (error) {
-            console.error(error)
+            throw error
         }
     },
-    getTodos: async (sortBy, skip, limit, filter) => {
+    getUserTodos: async (userId, sortBy = 'title', skip = 0, limit = 10, descending = 'false', filter = '') => {
         try {
-            return await todo.find(filter)
-            .collation({ locale: "sv" })
-            .sort(sortBy)
-            .skip(parseInt(skip))
-            .limit(parseInt(limit))
+            const query = filter ? { userId, title: new RegExp(filter, 'i') } : { userId }
+            const order = descending === 'true' ? -1 : 1
+            const sortQuery = getSort(sortBy, order)
+
+            return await todo.find(query)
+                .collation({ locale: "sv" })
+                .sort(sortQuery)
+                .skip(parseInt(skip))
+                .limit(parseInt(limit))
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
+        }
+    },
+    getAllTodos: async (sortBy = 'title', skip = 0, limit = 10, descending = 'false', filter = '') => {
+        try {
+            const query = filter ? { title: new RegExp(filter, 'i') } : {}
+            const order = descending === 'true' ? -1 : 1
+            const sortQuery = getSort(sortBy, order)
+
+            return await todo.find(query)
+                .collation({ locale: "sv" })
+                .sort(sortQuery)
+                .skip(parseInt(skip))
+                .limit(parseInt(limit))
+        } catch (error) {
+            throw error
         }
     },
     getTodosByListId: async (listId, sortBy = 'title', skip = 0, limit = 10, descending = 'false', filter = '') => {
@@ -72,16 +98,14 @@ module.exports = {
                 .skip(parseInt(skip))
                 .limit(parseInt(limit))
         } catch (error) {
-            //console.error(error)
             throw error
         }
     },
     getTodo: async (id) => {
         try {
-            return await todo.findOne({ _id: id })
+            return await todo.findById(id)
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
         }
     },
     createTodo: async (title, userId, listId) => {
@@ -95,25 +119,31 @@ module.exports = {
 
             return await todo.create(todoObject)
         } catch (error) {
-            console.log(error)
+            throw error
         }
     },
-    editTodo: async (id, updatedTodo) => {
+    editTodo: async (id, title, done) => {
         try {
-            let result = await todo.updateOne({ _id: id }, { $set: updatedTodo })
-            return result.n
+            let fields = {}
+
+            if (title) {
+                fields.title = title
+            }
+
+            if (typeof done === 'boolean') {
+                fields.done = done
+            }
+
+            return await todo.findByIdAndUpdate(id, { $set: fields }, { useFindAndModify: false, new: true })
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
         }
     },
     deleteTodo: async (id) => {
         try {
-            let result = await todo.deleteOne({ _id: id})
-            return result.n
+            return await todo.findByIdAndDelete(id)
         } catch (error) {
-            console.log(error)
-            return false
+            throw error
         }
     }
 }

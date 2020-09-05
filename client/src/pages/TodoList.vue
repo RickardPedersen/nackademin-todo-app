@@ -205,7 +205,8 @@ export default {
 
       if (validated) {
         let todo = {
-          title: this.newTitle
+          title: this.newTitle,
+          listId: 'listidhere'
         }
 
         await TodoRequests.createTodo(todo)

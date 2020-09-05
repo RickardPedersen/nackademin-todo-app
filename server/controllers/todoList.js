@@ -27,8 +27,7 @@ module.exports = {
                 resObject.data = await model.getUsersTodoLists(req.user.userId)
             }
 
-            const status = resObject.count !== 0 ? 200 : 404
-            res.status(status).json(resObject)
+            res.status(200).json(resObject)
         } catch (error) {
             console.error(error)
             res.sendStatus(500)
@@ -61,13 +60,12 @@ module.exports = {
                 req.query.filter
             )
 
-            const status = count !== 0 ? 200 : 404
             const resObject = {
                 count,
                 data: todos
             }
 
-            res.status(status).json(resObject)
+            res.status(200).json(resObject)
         } catch (error) {
             console.error(error)
             res.sendStatus(500)

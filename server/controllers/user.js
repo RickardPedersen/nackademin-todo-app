@@ -1,196 +1,139 @@
 const model = require('../models/user.js')
-const { getTodos, countTodos } = require('../models/todo')
+const todoModel = require('../models/todo')
 const bcrypt = require('bcryptjs')
-
-function hashPassword(password) {
-    return bcrypt.hashSync(password, 10)
-}
-
-function getOrder(order) {
-    return order === 'true' ? -1 : 1
-}
-
-function getFilter(filter) {
-    let filterObject = filter ? { username: new RegExp(filter, 'i') } : {}
-    return filterObject
-}
-
-function getTodoFilter(filter, user) {
-    let filterObject = filter ? { title: new RegExp(filter, 'i') } : {}
-    if (!user.isAdmin()) {filterObject.userId = user.userId}
-    return filterObject
-}
-
-function getSort(sortBy, order) {
-    switch (sortBy) {
-        case 'username':
-            return { username: order }
-
-        case 'createdAt':
-            return { createdAt: order }
-
-        case 'updatedAt':
-            return { updatedAt: order }
-
-        default:
-            return { title: order }
-    }
-}
-
-function getTodoSort(sortBy, order) {
-    switch (sortBy) {
-        case 'title':
-            return { title: order }
-
-        case 'createdAt':
-            return { createdAt: order }
-
-        case 'updatedAt':
-            return { updatedAt: order }
-
-        default:
-            return { title: order }
-    }
-}
 
 module.exports = {
     getAllUsers: async (req, res) => {
-        let order = getOrder(req.query.order)
-        let filter = getFilter(req.query.filter, req.user)
-        let sortBy = getSort(req.query.sortBy, order)
-        let skip = req.query.skip || 0
-        let limit = req.query.limit || 5
+        try {
+            const count = await model.countUsers(req.query.filter)
+            const users = await model.getAllUsers(req.query.sortBy, req.query.skip, req.query.limit, req.query.descending, req.query.filter)
 
-        let count = await model.countUsers(filter)
-        let users = await model.getAllUsers(sortBy, skip, limit, filter)
-
-        if (users) {
-            let resObject = {
+            const resObject = {
                 count,
                 data: users
             }
+
             res.status(200).json(resObject)
-        } else {
-            res.sendStatus(404)
-        } 
+        } catch (error) {
+            console.error(error)
+            res.sendStatus(500)
+        }
     },
     getUser: async (req, res) => {
-        let user = await model.getUser({ _id: req.params.id })
-        if (!user) { return res.sendStatus(404) }
-        if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
-
-        res.status(200).json(user)
+        try {
+            const user = await model.getUser(req.params.id)
+            if (!user) { return res.sendStatus(404) }
+            if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
+    
+            res.status(200).json(user)
+        } catch (error) {
+            console.error(error)
+            res.sendStatus(500)
+        }
     },
     getUserTodos: async (req, res) => {
-        let skip = req.query.skip || 0
-        let limit = req.query.limit || 5
-        let order = getOrder(req.query.order)
-        let sortBy = getTodoSort(req.query.sortBy, order)
-        let filter = getTodoFilter(req.query.filter, req.user)
-        filter.userId = req.params.id
+        try {
+            const count = await todoModel.countUserTodos(req.params.id)
+            const todos = await todoModel.getUserTodos(
+                req.params.id,
+                req.query.sortBy,
+                req.query.skip,
+                req.query.limit,
+                req.query.descending,
+                req.query.filter
+            )
 
-        let count = await countTodos(filter)
-        let todos = await getTodos(sortBy, skip, limit, filter)
-
-        if (todos) {
-            let resObject = {
+            const resObject = {
                 count,
                 data: todos
             }
             res.status(200).json(resObject)
-        } else {
-            res.sendStatus(404)
-        }
-    },
-    addUser: async (req, res) => {
-        if (!req.body.hasOwnProperty('username') ||
-            !req.body.hasOwnProperty('password')
-            ) {
-                res.sendStatus(400)
-        }    
-
-        // check if username already exists, case insensitive
-        const caseInsensitiveUsername = new RegExp(`^${req.body.username}$` ,'i')
-        const existingUser = await model.getUser({ username: caseInsensitiveUsername })
-        if (existingUser) { return res.status(403).send('username already exists') }
-
-        let user = {
-            username: req.body.username,
-            password: hashPassword(req.body.password),
-            role: 'user'
-        }
-
-        if (req.body.hasOwnProperty('role') &&
-            req.body.role === 'admin' &&
-            req.user !== undefined &&
-            req.user.isAdmin()) {
-                user.role = 'admin'
-        }
-
-        let success = await model.addUser(user)
-
-        if (success) {
-            res.sendStatus(201)
-        } else {
+        } catch (error) {
+            console.error(error)
             res.sendStatus(500)
         }
     },
-    editUser: async (req, res) => {
-        let user = await model.getUser({ _id: req.params.id })
-        if (!user) { return res.sendStatus(404) }
-        if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
-        if (!req.body.hasOwnProperty('username') &&
-            !req.body.hasOwnProperty('password') &&
-            !req.body.hasOwnProperty('role')) {
-                res.sendStatus(400)
-        }
-
-        let updatedUser = {}
-        
-        if (req.body.hasOwnProperty('username')) {
+    addUser: async (req, res) => {
+        try {
+            if (!req.body.hasOwnProperty('username') ||
+                !req.body.hasOwnProperty('password')
+                ) {
+                    res.sendStatus(400)
+            }    
+    
             // check if username already exists, case insensitive
             const caseInsensitiveUsername = new RegExp(`^${req.body.username}$` ,'i')
-            const existingUser = await model.getUser({ username: caseInsensitiveUsername })
-            if (existingUser) {
-                // check if existing username is your own so you can change to upper case/lower case letters
-                if (req.user.userId !== existingUser._id.toString()) {
-                    return res.status(403).send('username already exists')
-                }
+            const existingUser = await model.getUserByUsername(caseInsensitiveUsername)
+            if (existingUser) { return res.status(409).send('username already exists') }
+    
+            let role = 'user'
+    
+            if (req.body.hasOwnProperty('role') &&
+                req.body.role === 'admin' &&
+                req.user !== undefined &&
+                req.user.isAdmin()) {
+                    role = 'admin'
             }
-
-            updatedUser.username = req.body.username
+    
+            const newUser = await model.addUser(req.body.username, req.body.password, role)
+            res.status(200).json(newUser)
+        } catch (error) {
+            console.error(error)
         }
-
-        if (req.body.hasOwnProperty('password')) {
-            updatedUser.password = hashPassword(req.body.password)
-        }
-
-        if (req.body.hasOwnProperty('role') && req.user.isAdmin()) {
-            updatedUser.role = req.body.role
-        }
-
-        let updUser = await model.editUser(req.params.id, updatedUser)
-
-        if (updUser === 0) {
-            res.sendStatus(404)
-        } else if (updUser === 1) {
-            res.sendStatus(200)
-        } else {
+    },
+    editUser: async (req, res) => {
+        try {
+            const user = await model.getUser({ _id: req.params.id })
+            if (!user) { return res.sendStatus(404) }
+            if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
+            if (!req.body.hasOwnProperty('username') &&
+                !req.body.hasOwnProperty('password') &&
+                !req.body.hasOwnProperty('role')) {
+                    res.sendStatus(400)
+            }
+    
+            let updatedUser = {}
+            
+            if (req.body.hasOwnProperty('username')) {
+                // check if username already exists, case insensitive
+                const caseInsensitiveUsername = new RegExp(`^${req.body.username}$` ,'i')
+                const existingUser = await model.getUserByUsername(caseInsensitiveUsername)
+                if (existingUser) {
+                    // check if existing username is your own so you can change to upper case/lower case letters
+                    if (req.user.userId !== existingUser._id.toString()) {
+                        return res.status(403).send('username already exists')
+                    }
+                }
+    
+                updatedUser.username = req.body.username
+            }
+    
+            if (req.body.hasOwnProperty('password')) {
+                updatedUser.password = bcrypt.hashSync(req.body.password, 10)
+            }
+    
+            if (req.body.hasOwnProperty('role') && req.user.isAdmin()) {
+                updatedUser.role = req.body.role
+            }
+    
+            const updUser = await model.editUser(req.params.id, updatedUser)
+    
+            res.status(200).json(updUser)
+        } catch (error) {
+            console.error(error)
             res.sendStatus(500)
         }
     },
     deleteUser: async (req, res) => {
-        let user = await model.getUser({ _id: req.params.id })
-        if (!user) { return res.sendStatus(404) }
-        if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
-
-        let delPost = await model.deleteUser(req.params.id)
-
-        if (delPost === 0) {
-            res.sendStatus(404)
-        } else if (delPost === 1) {
-            res.sendStatus(200)
-        } else {
+        try {
+            const user = await model.getUser({ _id: req.params.id })
+            if (!user) { return res.sendStatus(404) }
+            if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
+    
+            const deletedUser = await model.deleteUser(req.params.id)
+            res.status(200).json(deletedUser)
+        } catch (error) {
+            console.error(error)
             res.sendStatus(500)
         }
     }

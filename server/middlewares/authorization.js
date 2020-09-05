@@ -8,6 +8,7 @@ module.exports = {
         }
     
         const token = req.headers.authorization.replace("Bearer ", "")
+        if (token === 'null') { return res.sendStatus(401) }
     
         try {
             req.user = await verifyToken(token)
@@ -34,6 +35,7 @@ module.exports = {
         }
     
         const token = req.headers.authorization.replace("Bearer ", "")
+        if (token === 'null') { return res.sendStatus(401) }
     
         try {
             req.user = await verifyToken(token)

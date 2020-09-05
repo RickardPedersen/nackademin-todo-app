@@ -1,4 +1,4 @@
-//require('dotenv').config()
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -16,6 +16,5 @@ app.use('/api/users', users)
 app.use('/api/authentication', authentication)
 app.use('/api/todos', todos)
 app.use('/api/todoLists', todoLists)
-//console.log(process.env.ENVIRONMENT)
 
 module.exports = app
