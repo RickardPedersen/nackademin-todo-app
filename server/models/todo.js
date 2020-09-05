@@ -1,9 +1,23 @@
-const {todos} = require('../database/dbSetup')
+const {todo} = require('../database/dbSetup')
 
 module.exports = {
+    clearTodos: async () => {
+        try {
+            if (process.env.ENVIRONMENT !== 'test') {
+                throw new Error('Drop collection is only allowed in test environment')
+            }
+
+            const collectionList = await todo.db.db.listCollections({name: todo.collection.name}).toArray()
+            if (collectionList.length !== 0) {
+                await todo.collection.drop()
+            }          
+        } catch (error) {
+            console.error(error)
+        }
+    },
     countTodos: async (filter) => {
         try {
-            return await todos.countDocuments(filter)
+            return await todo.countDocuments(filter)
         } catch (error) {
             console.log(error)
             return false
@@ -11,7 +25,7 @@ module.exports = {
     },
     getTodos: async (sortBy, skip, limit, filter) => {
         try {
-            return await todos.find(filter)
+            return await todo.find(filter)
             .collation({ locale: "sv" })
             .sort(sortBy)
             .skip(parseInt(skip))
@@ -21,26 +35,38 @@ module.exports = {
             return false
         }
     },
+    getTodosByListId: async (listId) => {
+        try {
+            return await todo.find({listId})   
+        } catch (error) {
+            console.error(error)
+        }
+    },
     getTodo: async (id) => {
         try {
-            return await todos.findOne({ _id: id })
+            return await todo.findOne({ _id: id })
         } catch (error) {
             console.log(error)
             return false
         }
     },
-    postTodo: async (todo) => {
+    createTodo: async (title, userId, listId) => {
         try {
-            await todos.create(todo)
-            return true
+            const todoObject = {
+                title,
+                done: false,
+                userId,
+                listId
+            }
+
+            return await todo.create(todoObject)
         } catch (error) {
             console.log(error)
-            return false
         }
     },
     editTodo: async (id, updatedTodo) => {
         try {
-            let result = await todos.updateOne({ _id: id }, { $set: updatedTodo })
+            let result = await todo.updateOne({ _id: id }, { $set: updatedTodo })
             return result.n
         } catch (error) {
             console.log(error)
@@ -49,7 +75,7 @@ module.exports = {
     },
     deleteTodo: async (id) => {
         try {
-            let result = await todos.deleteOne({ _id: id})
+            let result = await todo.deleteOne({ _id: id})
             return result.n
         } catch (error) {
             console.log(error)

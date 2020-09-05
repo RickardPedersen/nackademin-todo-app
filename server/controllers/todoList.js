@@ -21,7 +21,7 @@ module.exports = {
             resObject.data = await model.getUsersTodoLists(req.user.userId)
         }
 
-        if (resObject.data.length === 0) { status = 404 }
+        if (resObject.count === 0) { status = 404 }
 
         res.status(status).json(resObject)
     },

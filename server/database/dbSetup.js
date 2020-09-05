@@ -95,7 +95,7 @@ const todoListSchema = new mongoose.Schema({
 )
 
 const user = mongoose.model('user', userSchema)
-const todos = mongoose.model('todos', todoSchema)
+const todo = mongoose.model('todo', todoSchema)
 const todoList = mongoose.model('todoList', todoListSchema)
 
-module.exports = {connect, disconnect, user, todos, todoList}
+module.exports = {connect, disconnect, user, todo, todoList}

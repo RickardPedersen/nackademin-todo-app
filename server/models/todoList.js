@@ -3,6 +3,10 @@ const {todoList} = require('../database/dbSetup')
 module.exports = {
     clearTodoLists: async () => {
         try {
+            if (process.env.ENVIRONMENT !== 'test') {
+                throw new Error('Drop collection is only allowed in test environment')
+            }
+
             const collectionList = await todoList.db.db.listCollections({name: todoList.collection.name}).toArray()
             if (collectionList.length !== 0) {
                 await todoList.collection.drop()
