@@ -83,7 +83,7 @@ module.exports = {
     },
     editUser: async (req, res) => {
         try {
-            const user = await model.getUser({ _id: req.params.id })
+            const user = await model.getUser(req.params.id)
             if (!user) { return res.sendStatus(404) }
             if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
             if (!req.body.hasOwnProperty('username') &&
@@ -126,7 +126,7 @@ module.exports = {
     },
     deleteUser: async (req, res) => {
         try {
-            const user = await model.getUser({ _id: req.params.id })
+            const user = await model.getUser(req.params.id)
             if (!user) { return res.sendStatus(404) }
             if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
     
