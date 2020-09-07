@@ -1,4 +1,5 @@
 const model = require('../models/todo.js')
+const todoListModel = require('../models/todoList.js')
 
 module.exports = {
     getTodos: async (req, res) => {      
@@ -53,7 +54,10 @@ module.exports = {
                 !req.body.hasOwnProperty('listId')) {
                 return res.sendStatus(400)
             }
-            // TODO: check if todo list exists here
+
+            const todoList = await todoListModel.getTodoList(req.body.listId)
+            if (!todoList) { return res.sendStatus(404) }
+            if (!todoList.userIds.includes(req.user.userId)) { return res.sendStatus(403) }
     
             const todo = await model.createTodo(req.body.title, req.user.userId, req.body.listId)
             res.status(201).json(todo)   
