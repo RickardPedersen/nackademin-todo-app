@@ -50,6 +50,13 @@ module.exports = {
             throw error
         }
     },
+    getTodoListsByCreatorId: async (creatorId) => {
+        try {
+            return await todoList.find({creatorId})
+        } catch (error) {
+            throw error
+        }
+    },
     countAllTodoLists: async () => {
         try {
             return await todoList.countDocuments({})

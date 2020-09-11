@@ -78,6 +78,26 @@ describe('Todo List Model', function() {
         todoLists.length.should.equal(2)
     })
 
+    it('should get todo lists by creatorId', async function() {
+        // Arrange
+        const userId = 'jhaksdgfajhsdfaksjd'
+
+        for (let i = 0, noOfTodoLists = 10, noOfUserLists = 3; i < noOfTodoLists; i++) {
+            if (i < noOfUserLists) {
+                await todoListModel.createTodoList('Test List', userId)
+            } else {
+                await todoListModel.createTodoList('Test List', 'akljdfshgaldskjf')
+            }
+        }
+
+        // Act
+        const todoLists = await todoListModel.getTodoListsByCreatorId(userId)
+
+        // Assert
+        todoLists.should.be.an('array')
+        todoLists.length.should.equal(3)
+    })
+
     it('should count all todo lists', async () => {
         // Arrange
         for (let i = 0, noOfTodoLists = 10; i < noOfTodoLists; i++) {
