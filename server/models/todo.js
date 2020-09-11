@@ -145,5 +145,12 @@ module.exports = {
         } catch (error) {
             throw error
         }
+    },
+    deleteAllUserTodos: async (userId) => {
+        try {
+            return await todo.deleteMany({userId})
+        } catch (error) {
+            throw error
+        }
     }
 }

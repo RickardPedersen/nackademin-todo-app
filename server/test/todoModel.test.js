@@ -16,7 +16,7 @@ describe('Todo Model', function() {
 
     it('should create todo', async function() {
         // Arrange
-        const title = 'Test List'
+        const title = 'Test Todo'
         const userId = 'asdasdasdasdasd'
         const listId = 'kshjdfghlskdfjgh'
 
@@ -36,7 +36,7 @@ describe('Todo Model', function() {
 
     it('should get todos by listId', async function() {
         // Arrange
-        const title = 'Test List'
+        const title = 'Test Todo'
         const userId = 'asdasdasdasdasd'
         const listId = 'kshjdfghlskdfjgh'
         for (let i = 0, noOfTodos = 10, noOfMatchingTodos = 5; i < noOfTodos; i++) {
@@ -58,6 +58,31 @@ describe('Todo Model', function() {
         }
     })
 
+    it('should delete all todos matching the user id', async function() {
+        // Arrange
+        const title = 'Test Todo'
+        const userId = 'asdasdasdasdasd'
+        const listId = 'kshjdfghlskdfjgh'
+        for (let i = 0, noOfTodos = 10, noOfMatchingTodos = 5; i < noOfTodos; i++) {
+            if (i < noOfMatchingTodos) {
+                await todoModel.createTodo(title, userId, listId)
+            } else {
+                await todoModel.createTodo(title, 'khfdglksjfgh', listId)
+            }
+        }
+
+        // Act
+        const results = await todoModel.deleteAllUserTodos(userId)
+
+        // Assert
+        results.should.be.an('object')
+        results.should.have.property('n')
+        results.should.have.property('ok')
+        results.should.have.property('deletedCount')
+        results.n.should.equal(5)
+        results.ok.should.equal(1)
+        results.deletedCount.should.equal(5)
+    })
 
     after(async function() {
         await disconnect()
