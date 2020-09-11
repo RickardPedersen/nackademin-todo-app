@@ -1,5 +1,6 @@
 const model = require('../models/user.js')
 const todoModel = require('../models/todo')
+const todoListModel = require('../models/todoList')
 const bcrypt = require('bcryptjs')
 
 module.exports = {
@@ -129,9 +130,23 @@ module.exports = {
             const user = await model.getUser(req.params.id)
             if (!user) { return res.sendStatus(404) }
             if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
-    
+
+
+            const deletedTodos = await todoModel.deleteAllUserTodos(req.params.id)
+            const userTodoLists = await todoListModel.getTodoListsByCreatorId(req.params.id)
+
+            for (let todoList of userTodoLists) {
+                let deletedTodoList = await todoModel.deleteAllTodoListTodos(todoList._id)
+                deletedTodos.deletedCount += deletedTodoList.deletedCount
+            }
             const deletedUser = await model.deleteUser(req.params.id)
-            res.status(200).json(deletedUser)
+
+            const responseObject = {
+                deletedUser,
+                deletedTodoListsCount: userTodoLists.length,
+                deletedTodosCount: deletedTodos.deletedCount
+            }
+            res.status(200).json(responseObject)
         } catch (error) {
             console.error(error)
             res.sendStatus(500)

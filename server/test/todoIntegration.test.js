@@ -9,7 +9,7 @@ chai.should()
 const app = require('../app')
 const {addUser, clearUsers, authenticateUser} = require('../models/user')
 
-describe('Todo List Integration', function() {
+describe('Todo Integration', function() {
     before(async function() {
         await connect()
     })
