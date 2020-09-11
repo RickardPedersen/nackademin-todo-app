@@ -152,5 +152,12 @@ module.exports = {
         } catch (error) {
             throw error
         }
+    },
+    deleteAllTodoListTodos: async (listId) => {
+        try {
+            return await todo.deleteMany({listId})
+        } catch (error) {
+            throw error
+        }
     }
 }
