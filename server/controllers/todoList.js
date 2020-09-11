@@ -99,8 +99,15 @@ module.exports = {
             const todoList = await model.getTodoList(req.params.id)
             if (!todoList) { return res.sendStatus(404) }
             if (!req.user.isAdmin() && !req.user.isListCreator(todoList)) { return res.sendStatus(403) }
-            const result = await model.deleteTodoList(req.params.id)
-            res.status(200).json(result)
+
+            const deletedTodos = await todoModel.deleteAllTodoListTodos(req.params.id)
+            const deletedTodoList = await model.deleteTodoList(req.params.id)
+
+            const responseObject = {
+                deletedTodoList,
+                deletedTodosCount: deletedTodos.deletedCount
+            }
+            res.status(200).json(responseObject)
         } catch (error) {
             console.error(error)
             res.sendStatus(500)

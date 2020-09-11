@@ -181,10 +181,21 @@ describe('Todo List Integration', function() {
         res2.body.userIds.should.not.include(this.test.adminId)
     })
 
-    it('should delete a todo list', async function() {
+    it('should delete a todo list and all todos in it', async function() {
         // Arrange
         const newList = await todoListModel.createTodoList('Test List', this.test.userId)
         const id = newList._id.toString()
+
+        const title = 'Test List'
+        const userId = 'asdasdasdasdasd'
+
+        for (let i = 0, noOfTodos = 15, noOfUserTodos = 11; i < noOfTodos; i++) {
+            if (i < noOfUserTodos) {
+                await todoModel.createTodo(title, userId, id)
+            } else {
+                await todoModel.createTodo(title, 'asdfhlaksdjf', id)
+            }
+        }
 
         // Act
         const res = await request(app)
@@ -200,7 +211,12 @@ describe('Todo List Integration', function() {
         res.should.have.status(200)
         res.should.be.json
         res.body.should.be.an('object')
-        res.body._id.should.equal(id)
+        res.body.should.have.keys(['deletedTodoList', 'deletedTodosCount'])
+        res.body.deletedTodoList.should.be.an('object')
+        res.body.deletedTodoList.should.have.property('_id')
+        res.body.deletedTodoList._id.should.equal(id)
+        res.body.deletedTodosCount.should.be.a('number')
+        res.body.deletedTodosCount.should.equal(15)
 
         removed.should.have.status(404)
     })
