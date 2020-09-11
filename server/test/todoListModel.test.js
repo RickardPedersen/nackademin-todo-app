@@ -171,6 +171,31 @@ describe('Todo List Model', function() {
         expect(testGetTodoList).to.be.null
     })
 
+    it('should delete all todo lists created by the user', async function() {
+        // Arrange
+        const creatorId = 'jhaksdgfajhsdfaksjd'
+
+        for (let i = 0, noOfTodoLists = 10, noOfUserLists = 2; i < noOfTodoLists; i++) {
+            if (i < noOfUserLists) {
+                await todoListModel.createTodoList('Test List', creatorId)
+            } else {
+                await todoListModel.createTodoList('Test List', 'akljdfshgaldskjf')
+            }
+        }
+
+        // Act
+        const result = await todoListModel.deleteAllUsersTodoLists(creatorId)
+
+        // Assert
+        result.should.be.an('object')
+        result.should.have.property('n')
+        result.should.have.property('ok')
+        result.should.have.property('deletedCount')
+        result.n.should.equal(2)
+        result.ok.should.equal(1)
+        result.deletedCount.should.equal(2)
+    })
+
     after(async function() {
         await disconnect()
     })

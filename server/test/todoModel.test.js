@@ -72,16 +72,16 @@ describe('Todo Model', function() {
         }
 
         // Act
-        const results = await todoModel.deleteAllUserTodos(userId)
+        const result = await todoModel.deleteAllUserTodos(userId)
 
         // Assert
-        results.should.be.an('object')
-        results.should.have.property('n')
-        results.should.have.property('ok')
-        results.should.have.property('deletedCount')
-        results.n.should.equal(5)
-        results.ok.should.equal(1)
-        results.deletedCount.should.equal(5)
+        result.should.be.an('object')
+        result.should.have.property('n')
+        result.should.have.property('ok')
+        result.should.have.property('deletedCount')
+        result.n.should.equal(5)
+        result.ok.should.equal(1)
+        result.deletedCount.should.equal(5)
     })
 
     after(async function() {
