@@ -131,19 +131,27 @@ module.exports = {
             if (!user) { return res.sendStatus(404) }
             if (!req.user.is(user) && !req.user.isAdmin()) { return res.sendStatus(401) }
 
-
             const deletedTodos = await todoModel.deleteAllUserTodos(req.params.id)
-            const userTodoLists = await todoListModel.getTodoListsByCreatorId(req.params.id)
 
-            for (let todoList of userTodoLists) {
-                let deletedTodoList = await todoModel.deleteAllTodoListTodos(todoList._id)
-                deletedTodos.deletedCount += deletedTodoList.deletedCount
+            const memberTodoLists = await todoListModel.getUsersTodoLists(req.params.id)
+            for (let todoList of memberTodoLists) {
+                await todoListModel.removeMember(todoList._id, req.params.id)
             }
+
+            const ownedTodoLists = await todoListModel.getTodoListsByCreatorId(req.params.id)
+            let deletedTodoListsCount = 0;
+            for (let todoList of ownedTodoLists) {
+                const deletedTodosObject = await todoModel.deleteAllTodoListTodos(todoList._id)
+                const deletedTodoList = await todoListModel.deleteTodoList(todoList._id)
+                if (deletedTodoList) { deletedTodoListsCount++ }
+                deletedTodos.deletedCount += deletedTodosObject.deletedCount
+            }
+
             const deletedUser = await model.deleteUser(req.params.id)
 
             const responseObject = {
                 deletedUser,
-                deletedTodoListsCount: userTodoLists.length,
+                deletedTodoListsCount,
                 deletedTodosCount: deletedTodos.deletedCount
             }
             res.status(200).json(responseObject)
