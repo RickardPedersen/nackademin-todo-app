@@ -16,3 +16,5 @@ Cookies and local storage are used to improve the functionality on our website a
 You can at any time remove cookies and local storage in your browser settings and change how local information can be stored.
 
 If you choose to disable cookies and local storage that could mean some of our services will not work properly. Log in and settings will not be saved.
+
+- **Log Out** When you log out from our website, the [JSON Web Token](https://jwt.io/) will be removed from your local storage.
