@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+let mongoDatabase
 
 async function connect() {
     try {
@@ -12,7 +13,11 @@ async function connect() {
                 break;
 
             case 'test':
-                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_test', { useNewUrlParser: true, useUnifiedTopology: true })
+                const {MongoMemoryServer} = require('mongodb-memory-server')
+                mongoDatabase = new MongoMemoryServer()
+                let uri = await mongoDatabase.getUri()
+                await mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true})
+
                 break;
             
             default:
@@ -25,6 +30,9 @@ async function connect() {
 
 async function disconnect() {
     try {
+        if (process.env.ENVIRONMENT === 'test') {
+            await mongoDatabase.stop()
+        }
         await mongoose.connection.close(() => {
             console.log('Database connection closed')
         })

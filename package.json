@@ -12,6 +12,11 @@
     "type": "git",
     "url": "git+https://github.com/RickardPedersen/nackademin-todo-app.git"
   },
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "4.4.1"
+    }
+  },
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -32,6 +37,7 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^8.1.3",
+    "mongodb-memory-server": "^6.7.5",
     "nodemon": "^2.0.4"
   }
 }
