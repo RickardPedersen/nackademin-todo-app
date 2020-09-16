@@ -12,7 +12,7 @@ const {addUser, clearUsers, authenticateUser} = require('../models/user')
 
 describe('User Integration', function() {
     before(async function() {
-        await connect()
+        return connect()
     })
 
     beforeEach(async function() {
@@ -69,6 +69,6 @@ describe('User Integration', function() {
     })
 
     after(async function() {
-        await disconnect()
+        return disconnect()
     })
 })

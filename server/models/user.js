@@ -24,7 +24,7 @@ module.exports = {
             if (process.env.ENVIRONMENT !== 'test') {
                 throw new Error('Drop collection is only allowed in test environment')
             }
-
+            //await user.deleteMany({})
             const collectionList = await user.db.db.listCollections({name: user.collection.name}).toArray()
             if (collectionList.length !== 0) {
                 await user.collection.drop()

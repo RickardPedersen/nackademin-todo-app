@@ -7,7 +7,7 @@ chai.should()
 
 describe('Todo Model', function() {
     before(async function() {
-        await connect()
+        return connect()
     })
 
     beforeEach(async function() {
@@ -114,6 +114,6 @@ describe('Todo Model', function() {
     })
 
     after(async function() {
-        await disconnect()
+        return disconnect()
     })
 })

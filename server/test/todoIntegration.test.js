@@ -11,7 +11,7 @@ const {addUser, clearUsers, authenticateUser} = require('../models/user')
 
 describe('Todo Integration', function() {
     before(async function() {
-        await connect()
+        return connect()
     })
 
     beforeEach(async function() {
@@ -46,6 +46,6 @@ describe('Todo Integration', function() {
     })
 
     after(async function() {
-        await disconnect()
+        return disconnect()
     })
 })

@@ -7,11 +7,15 @@ chai.should()
 
 describe('User Model', function() {
     before(async function() {
-        await connect()
+        return connect()
     })
 
     beforeEach(async function() {
         await userModel.clearUsers()
+    })
+
+    it('should be a new feature', function() {
+        true.should.equal(true)
     })
 
     it('should create a user', async function() {
@@ -68,6 +72,6 @@ describe('User Model', function() {
     })
 
     after(async function() {
-        await disconnect()
+        return disconnect()
     })
 })

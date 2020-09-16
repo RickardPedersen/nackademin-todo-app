@@ -1,23 +1,47 @@
 const mongoose = require('mongoose')
+let mongoDatabase
+switch (process.env.ENVIRONMENT) {
+    case 'dev':
+        mongoDatabase = {
+            // mongodb+srv://user:password@host/dbname
+            getUri: async () => 
+                `mongodb://localhost:27017/TodoAppDB_dev`
+                //`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`
+        }
+        break;
+
+    case 'prod':
+        mongoDatabase = {
+            // mongodb+srv://user:password@host/dbname
+            getUri: async () => 
+                `mongodb://localhost:27017/TodoAppDB_prod`
+                //`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`
+        }
+        break;
+
+    case 'test':
+        const {MongoMemoryServer} = require('mongodb-memory-server')
+        mongoDatabase = new MongoMemoryServer()
+        break;
+    
+    default:
+        mongoDatabase = {
+            // mongodb+srv://user:password@host/dbname
+            getUri: async () => 
+                `mongodb://localhost:27017/TodoAppDB_dev`
+                //`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`
+        }
+}
 
 async function connect() {
     try {
-        switch (process.env.ENVIRONMENT) {
-            case 'dev':
-                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_dev', { useNewUrlParser: true, useUnifiedTopology: true })
-                break;
-
-            case 'prod':
-                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_prod', { useNewUrlParser: true, useUnifiedTopology: true })
-                break;
-
-            case 'test':
-                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_test', { useNewUrlParser: true, useUnifiedTopology: true })
-                break;
-            
-            default:
-                await mongoose.connect('mongodb://localhost:27017/TodoAppDB_dev', { useNewUrlParser: true, useUnifiedTopology: true })
-        }
+        const uri = await mongoDatabase.getUri()
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false,
+            useCreateIndex: true
+        })
     } catch (error) {
         console.error(error)
     }
@@ -25,9 +49,10 @@ async function connect() {
 
 async function disconnect() {
     try {
-        await mongoose.connection.close(() => {
-            console.log('Database connection closed')
-        })
+        await mongoose.connection.close(() => { console.log('Disconnected from database') })
+        if (process.env.ENVIRONMENT === 'test') {
+            await mongoDatabase.stop()
+        }
     } catch (error) {
         console.error(error)
     }
