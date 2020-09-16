@@ -37,7 +37,7 @@ jobs:
   deploy_stage:
     runs-on: ubuntu-latest
     steps:
-      - uses: akhileshns/heroku-deploy@v3.4.6 # This is the action
+    - uses: akhileshns/heroku-deploy@v3.4.6 # This is the action
       needs: test
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
