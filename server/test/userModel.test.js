@@ -7,7 +7,7 @@ chai.should()
 
 describe('User Model', function() {
     before(async function() {
-        await connect()
+        return connect()
     })
 
     beforeEach(async function() {
@@ -72,6 +72,6 @@ describe('User Model', function() {
     })
 
     after(async function() {
-        await disconnect()
+        return disconnect()
     })
 })
