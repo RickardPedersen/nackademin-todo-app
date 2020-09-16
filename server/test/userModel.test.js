@@ -14,6 +14,10 @@ describe('User Model', function() {
         await userModel.clearUsers()
     })
 
+    it('should be a new feature', function() {
+        false.should.equal(true)
+    })
+
     it('should create a user', async function() {
         // Arrange
         const username = 'Rickard'
