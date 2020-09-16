@@ -22,9 +22,6 @@ switch (process.env.ENVIRONMENT) {
     case 'test':
         const {MongoMemoryServer} = require('mongodb-memory-server')
         mongoDatabase = new MongoMemoryServer()
-        
-        //await mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true})
-
         break;
     
     default:
@@ -52,10 +49,10 @@ async function connect() {
 
 async function disconnect() {
     try {
+        await mongoose.connection.close(() => { console.log('Disconnected from database') })
         if (process.env.ENVIRONMENT === 'test') {
+            await mongoDatabase.stop()
         }
-        await mongoose.connection.close(() => {console.log('Disconnected from database')})
-        await mongoDatabase.stop()
     } catch (error) {
         console.error(error)
     }

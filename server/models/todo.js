@@ -22,11 +22,11 @@ module.exports = {
             if (process.env.ENVIRONMENT !== 'test') {
                 throw new Error('Drop collection is only allowed in test environment')
             }
-            await todo.deleteMany({})
-            // const collectionList = await todo.db.db.listCollections({name: todo.collection.name}).toArray()
-            // if (collectionList.length !== 0) {
-            //     await todo.collection.drop()
-            // }          
+            //await todo.deleteMany({})
+            const collectionList = await todo.db.db.listCollections({name: todo.collection.name}).toArray()
+            if (collectionList.length !== 0) {
+                await todo.collection.drop()
+            }          
         } catch (error) {
             console.error(error)
             throw error
