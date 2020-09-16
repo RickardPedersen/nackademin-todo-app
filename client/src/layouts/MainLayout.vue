@@ -59,10 +59,23 @@ const linksData = [
     link: '/todos'
   },
   {
+    title: 'Todo Lists',
+    caption: '',
+    icon: '',
+    link: '/todo-list',
+  },
+  {
     title: 'User List',
     caption: '',
     icon: '',
-    link: '/users'
+    link: '/users',
+    adminLink: true
+  },
+  {
+    title: 'Profile',
+    caption: '',
+    icon: '',
+    link: '/profile'
   }
 ]
 
@@ -89,12 +102,12 @@ export default {
   },
   created() {
     this.showLogOutButton = this.auth.loggedIn
-    this.showMenu = this.auth.isAdmin
+    this.showMenu = this.auth.loggedIn
   },
   beforeUpdate() {
     this.showLogOutButton = this.auth.loggedIn
-    this.showMenu = this.auth.isAdmin
-    this.leftDrawerOpen = this.auth.isAdmin
+    this.showMenu = this.auth.loggedIn
+    //this.leftDrawerOpen = this.auth.loggedIn
   }
 }
 </script>

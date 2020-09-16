@@ -4,7 +4,8 @@ const state = {
     user: {
         loggedIn: false,
         role: 'guest',
-        isAdmin: false
+        isAdmin: false,
+        userId: null
     }
 }
 
@@ -34,6 +35,7 @@ const mutations = {
         state.user.loggedIn = true
         state.user.role = user.role
         state.user.isAdmin = user.role === 'admin'
+        state.user.userId = user.userId
     },
     logoutUser: (state, user) => {
         state.user.loggedIn = false

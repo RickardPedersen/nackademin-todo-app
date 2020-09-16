@@ -29,6 +29,17 @@ class TodoRequests {
         }
     }
 
+    static async getUser(userId) {
+        try {
+            const res = await axios.get(`${url}/${userId}`, config)
+            const data = res.data
+            return data
+        } catch (error) {
+            console.log(error)
+            return error
+        }
+    }
+
     static async createUser(postData) {
         try {
             const res = await axios.post(`${url}`, postData, config)
@@ -56,6 +67,16 @@ class TodoRequests {
             const res = await axios.delete(`${url}/${id}`, config)
             const data = res.data
             return data
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
+
+    static async addMember(listId, username) {
+        try {
+            const user = this.getUser()
+            
         } catch (error) {
             console.log(error)
             return false

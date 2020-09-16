@@ -66,15 +66,19 @@ mongoose.connection.once('open', function() {
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true
+        required: true,
+        minlength: 3,
+        maxlength: 20
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minlength: 8
     },
     role: {
         type: String,
-        required: true
+        required: true,
+        minlength: 1,
     }
   },
   { timestamps: true }
@@ -83,7 +87,9 @@ const userSchema = new mongoose.Schema({
 const todoSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        minlength: 1,
+        maxlength: 20
     },
     done: {
         type: Boolean,
@@ -105,7 +111,9 @@ const todoSchema = new mongoose.Schema({
 const todoListSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        minlength: 1,
+        maxlength: 20
     },
     creatorId: {
         type: String,

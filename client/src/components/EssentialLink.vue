@@ -3,6 +3,7 @@
     clickable
     tag="a"
     :to="link"
+    v-show="userCanSee"
   >
     <q-item-section
       v-if="icon"
@@ -21,8 +22,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'EssentialLink',
+  data() {
+    return {
+      userCanSee: true
+    }
+  },
   props: {
     title: {
       type: String,
@@ -42,6 +50,24 @@ export default {
     icon: {
       type: String,
       default: ''
+    },
+
+    adminLink: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    ...mapGetters(['auth'])
+  },
+  created() {
+    if (this.adminLink) {
+      this.userCanSee = this.auth.isAdmin
+    }
+  },
+  beforeUpdate() {
+    if (this.adminLink) {
+      this.userCanSee = this.auth.isAdmin
     }
   }
 }
