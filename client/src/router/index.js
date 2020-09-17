@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import test from '../store'
-const store = test()
+import Store from '../store'
+const store = Store()
 
 import routes from './routes'
 

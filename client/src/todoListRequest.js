@@ -1,10 +1,13 @@
 import axios from 'axios'
+import Store from './store'
+const store = Store()
+const token = store.getters.auth.userToken || localStorage.getItem('userToken')
 
 const url = '/api/todoLists'
 const userUrl = '/api/users'
 
 const config = {
-    headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` }
+    headers: { Authorization: `Bearer ${token}` }
 }
 
 class TodoListRequests {
@@ -14,7 +17,7 @@ class TodoListRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return error
         }
     }
@@ -25,7 +28,7 @@ class TodoListRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return error
         }
     }
@@ -36,7 +39,7 @@ class TodoListRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return false
         }
     }
@@ -47,7 +50,7 @@ class TodoListRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return false
         }
     }
@@ -58,7 +61,7 @@ class TodoListRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return false
         }
     }
