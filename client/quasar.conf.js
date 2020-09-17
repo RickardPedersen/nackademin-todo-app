@@ -82,10 +82,7 @@ cfg.module.rules.push({
         // proxy all requests starting with /api to jsonplaceholder
         '/api': {
           target: 'http://localhost:7070',
-          changeOrigin: true,
-          path: {
-            '^/api': ''
-          }
+          changeOrigin: true
         }
       }
     },
