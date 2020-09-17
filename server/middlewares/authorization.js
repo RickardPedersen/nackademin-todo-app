@@ -24,7 +24,7 @@ module.exports = {
             } else if (error.message === 'invalid token') {
                 res.status(403).send(resObject)
             } else {
-                console.log(error)
+                console.error(error)
                 res.status(500).send(resObject) 
             }
         }
@@ -52,7 +52,7 @@ module.exports = {
             } else if (error.message === 'Not Admin') {
                 res.status(401).send(error.message)
             } else {
-                console.log(error)
+                console.error(error)
                 res.sendStatus(500) 
             }
         }

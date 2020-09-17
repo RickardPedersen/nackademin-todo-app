@@ -25,7 +25,9 @@
 
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">{{
+            col.label
+          }}</q-th>
         </q-tr>
       </template>
 
@@ -52,16 +54,22 @@
           </q-td>
 
           <q-td key="createdAt" :props="props">
-            <div class="text-pre-wrap">{{ new Date(props.row.createdAt).toLocaleTimeString() }}</div>
+            <div class="text-pre-wrap">
+              {{ new Date(props.row.createdAt).toLocaleTimeString() }}
+            </div>
           </q-td>
 
-          <q-td
-            key="updatedAt"
-            :props="props"
-          >{{ new Date(props.row.updatedAt).toLocaleTimeString() }}</q-td>
+          <q-td key="updatedAt" :props="props">{{
+            new Date(props.row.updatedAt).toLocaleTimeString()
+          }}</q-td>
 
           <q-td key="delete" :props="props">
-            <q-btn round color="negative" icon="delete" @click="deleteTodo(props.row._id)" />
+            <q-btn
+              round
+              color="negative"
+              icon="delete"
+              @click="deleteTodo(props.row._id)"
+            />
           </q-td>
         </q-tr>
       </template>
@@ -70,49 +78,49 @@
 </template>
 
 <script>
-import TodoRequests from "../todoRequests"
+import TodoRequests from '../todoRequests'
 
 export default {
   data() {
     return {
-      newTitle: "",
-      filter: "",
+      newTitle: '',
+      filter: '',
       loading: false,
       pagination: {
-        sortBy: "desc",
+        sortBy: 'desc',
         descending: false,
         page: 1,
         rowsPerPage: 5,
-        rowsNumber: 0,
+        rowsNumber: 0
       },
       todos: [],
       selected: [],
       columns: [
-        { name: "done", label: "Done", field: "done", align: "left" },
+        { name: 'done', label: 'Done', field: 'done', align: 'left' },
         {
-          name: "title",
+          name: 'title',
           required: true,
-          label: "Title",
-          align: "left",
-          field: (row) => row.name,
-          format: (val) => `${val}`,
-          sortable: true,
+          label: 'Title',
+          align: 'left',
+          field: row => row.name,
+          format: val => `${val}`,
+          sortable: true
         },
         {
-          name: "createdAt",
-          label: "Created",
-          field: "createdAt",
+          name: 'createdAt',
+          label: 'Created',
+          field: 'createdAt',
           sortable: true,
-          style: "width: 10px",
+          style: 'width: 10px'
         },
         {
-          name: "updatedAt",
-          label: "Updated",
-          field: "updatedAt",
-          sortable: true,
+          name: 'updatedAt',
+          label: 'Updated',
+          field: 'updatedAt',
+          sortable: true
         },
-        { name: "delete", label: "Delete", field: "delete" },
-      ],
+        { name: 'delete', label: 'Delete', field: 'delete' }
+      ]
     }
   },
   methods: {
@@ -122,21 +130,24 @@ export default {
 
       this.loading = true
 
-      // get all rows if "All" (0) is selected
-      const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
+      const fetchCount =
+        rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
 
-      // calculate starting row of data
       const startRow = (page - 1) * rowsPerPage
 
-      // fetch data from server
-      const fetchResult = await this.fetchFromServer(this.$route.params.id, descending, page, fetchCount, sortBy, filter)
+      const fetchResult = await this.fetchFromServer(
+        this.$route.params.id,
+        descending,
+        page,
+        fetchCount,
+        sortBy,
+        filter
+      )
 
-      // update rowsCount with appropriate value
       this.pagination.rowsNumber = fetchResult.count
 
       const returnedData = fetchResult.data
 
-      // clear out existing data and add new
       this.todos.splice(0, this.todos.length, ...returnedData)
 
       this.pagination.page = page
@@ -150,37 +161,43 @@ export default {
       let skip = 0
       skip = (page - 1) * limit
 
-      return await TodoRequests.getUsersTodos(userId, order, skip, limit, sortBy, filter)
+      return await TodoRequests.getUsersTodos(
+        userId,
+        order,
+        skip,
+        limit,
+        sortBy,
+        filter
+      )
     },
     async deleteTodo(id) {
       await TodoRequests.deleteTodo(id)
 
       await this.onRequest({
         pagination: this.pagination,
-        filter: this.filter,
+        filter: this.filter
       })
     },
     async updateTodo(id, val) {
       let editedTodo = {
-        title: val,
+        title: val
       }
       await TodoRequests.editTodo(editedTodo, id)
       await this.onRequest({
         pagination: this.pagination,
-        filter: this.filter,
+        filter: this.filter
       })
       return true
     },
     async doneTodo(id, val) {
-
       let editedTodo = {
-        done: val,
+        done: val
       }
       await TodoRequests.doneTodo(editedTodo, id)
 
       await this.onRequest({
         pagination: this.pagination,
-        filter: this.filter,
+        filter: this.filter
       })
     },
     async submitTodo() {
@@ -188,32 +205,31 @@ export default {
 
       if (validated) {
         let todo = {
-          title: this.newTitle,
+          title: this.newTitle
         }
 
         await TodoRequests.createTodo(todo)
-        this.newTitle = ""
+        this.newTitle = ''
         this.$refs.addInput.blur()
         this.$refs.addInput.resetValidation()
 
         await this.onRequest({
           pagination: this.pagination,
-          filter: this.filter,
+          filter: this.filter
         })
       }
     },
     async createRules(val) {
       return new Promise((resolve, reject) => {
-        resolve(!!val || "Please type something")
+        resolve(!!val || 'Please type something')
       })
-    },
+    }
   },
   mounted() {
-    // get initial data from server (1st page)
     this.onRequest({
       pagination: this.pagination,
-      filter: this.filter,
+      filter: this.filter
     })
-  },
+  }
 }
 </script>

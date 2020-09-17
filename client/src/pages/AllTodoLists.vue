@@ -88,20 +88,20 @@
 </template>
 
 <script>
-import UserRequests from "../UserRequests";
-import TodoListRequests from "../todoListRequest";
+import UserRequests from '../UserRequests'
+import TodoListRequests from '../todoListRequest'
 
 export default {
   data() {
     return {
-      addTitle: "",
-      addPassword: "",
-      newPassword: "",
-      newTitle: "",
-      filter: "",
+      addTitle: '',
+      addPassword: '',
+      newPassword: '',
+      newTitle: '',
+      filter: '',
       loading: false,
       pagination: {
-        sortBy: "desc",
+        sortBy: 'desc',
         descending: false,
         page: 1,
         rowsPerPage: 5,
@@ -111,52 +111,48 @@ export default {
       selected: [],
       columns: [
         {
-          name: "seeTodos",
-          label: "See todos",
-          field: "seeTodos",
-          align: "left"
+          name: 'seeTodos',
+          label: 'See todos',
+          field: 'seeTodos',
+          align: 'left'
         },
         {
-          name: "title",
+          name: 'title',
           required: true,
-          label: "Title",
-          align: "left",
+          label: 'Title',
+          align: 'left',
           field: row => row.name,
           format: val => `${val}`,
           sortable: true
         },
         {
-          name: "createdAt",
-          label: "CreatedAt",
-          field: "createdAt",
+          name: 'createdAt',
+          label: 'CreatedAt',
+          field: 'createdAt',
           sortable: true,
-          style: "width: 10px"
+          style: 'width: 10px'
         },
         {
-          name: "updatedAt",
-          label: "UpdatedAt",
-          field: "updatedAt",
+          name: 'updatedAt',
+          label: 'UpdatedAt',
+          field: 'updatedAt',
           sortable: true
         },
-        { name: "delete", label: "Delete", field: "delete" }
+        { name: 'delete', label: 'Delete', field: 'delete' }
       ]
-    };
+    }
   },
   methods: {
     async onRequest(props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      const filter = props.filter;
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const filter = props.filter
 
-      this.loading = true;
+      this.loading = true
 
-      // get all rows if "All" (0) is selected
       const fetchCount =
-        rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage;
+        rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
 
-      // calculate starting row of data
-      const startRow = (page - 1) * rowsPerPage;
-
-      // fetch data from server
+      const startRow = (page - 1) * rowsPerPage
 
       const fetchResult = await this.fetchFromServer(
         descending,
@@ -164,27 +160,25 @@ export default {
         fetchCount,
         sortBy,
         filter
-      );
+      )
 
-      // update rowsCount with appropriate value
-      this.pagination.rowsNumber = fetchResult.count;
+      this.pagination.rowsNumber = fetchResult.count
 
-      const returnedData = fetchResult.data;
+      const returnedData = fetchResult.data
 
-      // clear out existing data and add new
-      this.users.splice(0, this.users.length, ...returnedData);
+      this.users.splice(0, this.users.length, ...returnedData)
 
-      this.pagination.page = page;
-      this.pagination.rowsPerPage = rowsPerPage;
-      this.pagination.sortBy = sortBy;
-      this.pagination.descending = descending;
+      this.pagination.page = page
+      this.pagination.rowsPerPage = rowsPerPage
+      this.pagination.sortBy = sortBy
+      this.pagination.descending = descending
 
-      this.loading = false;
+      this.loading = false
     },
 
     async fetchFromServer(order, page, limit, sortBy, filter) {
-      let skip = 0;
-      skip = (page - 1) * limit;
+      let skip = 0
+      skip = (page - 1) * limit
 
       return await TodoListRequests.getTodoLists(
         order,
@@ -192,59 +186,58 @@ export default {
         limit,
         sortBy,
         filter
-      );
+      )
     },
     async deleteTodoList(id) {
-      await TodoListRequests.deleteTodoList(id);
+      await TodoListRequests.deleteTodoList(id)
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
-      });
+      })
     },
     async updateTodoList(id, val) {
       let editedTodoList = {
         title: val
-      };
-      await TodoListRequests.updateTodoList(editedTodoList, id);
+      }
+      await TodoListRequests.updateTodoList(editedTodoList, id)
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
-      });
-      return true;
+      })
+      return true
     },
     async addTodoList() {
-      let validated = await this.createRules(this.newTitle);
+      let validated = await this.createRules(this.newTitle)
 
       if (validated) {
         let todoList = {
           title: this.addTitle
-        };
+        }
 
-        await TodoListRequests.createTodoList(todoList);
-        this.addTitle = "";
+        await TodoListRequests.createTodoList(todoList)
+        this.addTitle = ''
 
-        this.$refs.addTitle.blur();
+        this.$refs.addTitle.blur()
 
-        this.$refs.addTitle.resetValidation();
+        this.$refs.addTitle.resetValidation()
 
         await this.onRequest({
           pagination: this.pagination,
           filter: this.filter
-        });
+        })
       }
     },
     async createRules(val) {
       return new Promise((resolve, reject) => {
-        resolve(!!val || "Please type something");
-      });
+        resolve(!!val || 'Please type something')
+      })
     }
   },
   mounted() {
-    // get initial data from server (1st page)
     this.onRequest({
       pagination: this.pagination,
       filter: this.filter
-    });
+    })
   }
-};
+}
 </script>
