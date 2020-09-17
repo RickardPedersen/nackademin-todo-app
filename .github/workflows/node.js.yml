@@ -8,9 +8,6 @@ on:
     branches: [ master, release, develop ]
   pull_request:
     branches: [ master, release, develop ]
-  pull_request_review:
-    types: [ submitted ]
-    branches: [ master, release, develop ]
 
 jobs:
   test:
@@ -34,7 +31,7 @@ jobs:
   deploy_stage:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/release' && github.event.pull_request.merged == true
+    if: github.ref == 'refs/heads/release'
     steps:
     - uses: actions/checkout@v2
     - uses: akhileshns/heroku-deploy@v3.4.6
@@ -46,7 +43,7 @@ jobs:
   deploy_prod:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' && github.event.pull_request.merged == true
+    if: github.ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
     - uses: akhileshns/heroku-deploy@v3.4.6
