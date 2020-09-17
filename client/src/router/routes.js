@@ -38,6 +38,27 @@ const routes = [
         meta: {
           middleware: [admin]
         }
+      },
+      {
+        path: "todo-list",
+        component: () => import("pages/AllTodoLists.vue"),
+        meta: {
+          middleware: [user]
+        }
+      },
+      {
+        path: "todo-list/:id",
+        component: () => import("pages/TodoLists.vue"),
+        meta: {
+          middleware: [user]
+        }
+      },
+      {
+        path: "profile",
+        component: () => import("pages/Profile.vue"),
+        meta: {
+          middleware: [user]
+        }
       }
     ]
   },

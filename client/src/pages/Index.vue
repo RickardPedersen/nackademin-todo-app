@@ -135,10 +135,10 @@ export default {
         password: this.password
       }
       try {
-        let res = await axios.post('http://localhost:7070/api/authentication/login', postData)
+        let res = await axios.post('/api/authentication/login', postData)
         localStorage.setItem('userToken', res.data)
-
-        this.$router.push('/todos')
+        location.reload(true)
+        //this.$router.push('/todos')
       } catch (error) {
         console.error(error)
       }
@@ -150,7 +150,7 @@ export default {
       }
 
       try {
-        let res = await axios.post('http://localhost:7070/api/users', postData)
+        let res = await axios.post('/api/users', postData)
 
         this.switchForm()
       } catch (error) {

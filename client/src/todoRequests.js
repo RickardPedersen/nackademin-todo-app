@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const url = 'http://localhost:7070/api/todos'
-const userUrl = 'http://localhost:7070/api/users'
+const url = '/api/todos'
+const userUrl = '/api/users'
 
 const config = {
     headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` }

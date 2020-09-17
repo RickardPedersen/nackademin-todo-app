@@ -73,7 +73,7 @@
             {{ props.row.username }}
             <q-popup-edit
               v-model="props.row.username"
-              title="Update Title"
+              title="Change Username"
               buttons
               @save="updateTodo(props.row._id, props.row.username)"
             >
@@ -98,7 +98,7 @@
             {{ props.row.role }}
             <q-popup-edit
               v-model="props.row.role"
-              title="Update Role"
+              title="Change Role"
               buttons
               @save="updateRole(props.row._id, props.row.role)"
             >

@@ -1,18 +1,5 @@
 <template>
   <div class="q-pa-md">
-    <!--
-    <q-btn>
-      Edit Username
-      <q-popup-edit
-        title="Update Title"
-        buttons
-        @save="console.log('Save username')"
-      >
-        <q-input dense autofocus counter />
-      </q-popup-edit>
-    </q-btn>
-    -->
-
     <q-table
       title="Todos"
       :data="todos"
@@ -36,7 +23,7 @@
 
     <template v-slot:top-left>
       <div class="q-table__title">Todos</div>
-      <q-form @submit="submitTodo">
+      <!--<q-form @submit="submitTodo">
         <q-input
         ref="addInput"
           debounce="300"
@@ -47,7 +34,7 @@
         >
             <q-btn  dense flat icon="add" type="submit" />
         </q-input>
-      </q-form>
+      </q-form>-->
     </template>
 
     <template v-slot:header="props">
