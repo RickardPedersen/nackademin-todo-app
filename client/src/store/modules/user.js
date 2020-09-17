@@ -21,7 +21,7 @@ const actions = {
             headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` }
         }
         try {
-            const res = await axios.get('http://localhost:7070/api/authentication/isLoggedIn', config)
+            const res = await axios.get('/api/authentication/isLoggedIn', config)
             commit('setUser', res.data) 
         } catch (error) {
             console.log(error)
