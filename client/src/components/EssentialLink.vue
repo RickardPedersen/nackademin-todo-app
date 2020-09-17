@@ -1,24 +1,36 @@
 <template>
-  <q-item
-    clickable
-    tag="a"
-    :to="link"
-    v-show="userCanSee"
-  >
-    <q-item-section
-      v-if="icon"
-      avatar
-    >
-      <q-icon :name="icon" />
-    </q-item-section>
+  <div>
+    <q-item clickable tag="a" :to="link" v-if="!adminLink">
+      <q-item-section v-if="icon" avatar>
+        <q-icon :name="icon" />
+      </q-item-section>
 
-    <q-item-section>
-      <q-item-label>{{ title }}</q-item-label>
-      <q-item-label caption>
-        {{ caption }}
-      </q-item-label>
-    </q-item-section>
-  </q-item>
+      <q-item-section>
+        <q-item-label>{{ title }}</q-item-label>
+        <q-item-label caption>
+          {{ caption }}
+        </q-item-label>
+      </q-item-section>
+    </q-item>
+    <q-item
+      clickable
+      tag="a"
+      :to="link"
+      v-else
+      v-show="$store.getters.auth.isAdmin"
+    >
+      <q-item-section v-if="icon" avatar>
+        <q-icon :name="icon" />
+      </q-item-section>
+
+      <q-item-section>
+        <q-item-label>{{ title }}</q-item-label>
+        <q-item-label caption>
+          {{ caption }}
+        </q-item-label>
+      </q-item-section>
+    </q-item>
+  </div>
 </template>
 
 <script>
@@ -59,16 +71,6 @@ export default {
   },
   computed: {
     ...mapGetters(['auth'])
-  },
-  created() {
-    if (this.adminLink) {
-      this.userCanSee = this.auth.isAdmin
-    }
-  },
-  beforeUpdate() {
-    if (this.adminLink) {
-      this.userCanSee = this.auth.isAdmin
-    }
   }
 }
 </script>

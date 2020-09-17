@@ -9,7 +9,6 @@ switch (process.env.ENVIRONMENT) {
     case 'dev':
         mongoDatabase = {
             getUri: async () => 
-                //`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`
                 `mongodb://localhost:27017/TodoAppDB_dev`
         }
         break;
@@ -32,7 +31,6 @@ switch (process.env.ENVIRONMENT) {
         mongoDatabase = { 
             getUri: async () => 
                 `mongodb://localhost:27017/TodoAppDB_dev`
-                //`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`
         }
 }
 

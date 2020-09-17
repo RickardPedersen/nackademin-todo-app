@@ -1,18 +1,5 @@
 <template>
   <div class="q-pa-md">
-    <!--
-    <q-btn>
-      Edit Username
-      <q-popup-edit
-        title="Update Title"
-        buttons
-        @save="console.log('Save username')"
-      >
-        <q-input dense autofocus counter />
-      </q-popup-edit>
-    </q-btn>
-    -->
-
     <q-table
       title="Todos"
       :data="todos"
@@ -46,18 +33,74 @@
             <q-btn dense flat icon="add" type="submit" />
           </q-input>
         </q-form>
-        <q-form @submit="addMember">
+
+        <q-btn-dropdown
+          class="float-right q-mb-sm"
+          color="info"
+          icon="add"
+          label="Invite member"
+          style="width:200px"
+        >
           <q-input
-            ref="addMember"
-            debounce="300"
-            v-model="newMember"
-            label="Add member"
-            lazy-rules="ondemand"
-            :rules="[createRules]"
+            v-on:input="fectchUsersSearch(searchUser)"
+            label="Invite to group"
+            v-model="searchUser"
+            class="bg-white"
+            style="width:200px"
           >
-            <q-btn dense flat icon="add" type="submit" />
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
           </q-input>
-        </q-form>
+          <q-list>
+            <q-item
+              v-for="(user, i) in userList"
+              :key="i"
+              clickable
+              v-close-popup
+              @click="inviteUser(user._id)"
+            >
+              <q-item-section>
+                <q-item-label>{{ user.username }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+
+        <br />
+
+        <q-btn-dropdown
+          class="float-right"
+          color="red"
+          icon="delete"
+          label="Remove member"
+          style="width:200px"
+        >
+          <q-input
+            v-on:input="fectchUsersSearch(searchUser)"
+            label="Remove member"
+            v-model="searchUser"
+            class="bg-white"
+            style="width:200px"
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+          <q-list>
+            <q-item
+              v-for="(user, i) in userList"
+              :key="i"
+              clickable
+              v-close-popup
+              @click="removeMember(user._id)"
+            >
+              <q-item-section>
+                <q-item-label>{{ user.username }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </template>
 
       <template v-slot:header="props">
@@ -115,19 +158,21 @@
 </template>
 
 <script>
-import TodoListRequests from "../todoListRequest";
-import TodoRequests from "../todoRequests";
-import UserRequests from "../UserRequests"
+import TodoListRequests from '../todoListRequest'
+import TodoRequests from '../todoRequests'
+import UserRequests from '../UserRequests'
 export default {
   data() {
     return {
-      testar: "asdasdas",
-      newTitle: "",
-      newMember: "",
-      filter: "",
+      userList: [],
+      searchUser: '',
+      testar: 'asdasdas',
+      newTitle: '',
+      newMember: '',
+      filter: '',
       loading: false,
       pagination: {
-        sortBy: "desc",
+        sortBy: 'desc',
         descending: false,
         page: 1,
         rowsPerPage: 5,
@@ -136,75 +181,86 @@ export default {
       todos: [],
       selected: [],
       columns: [
-        { name: "done", label: "Done", field: "done", align: "left" },
+        { name: 'done', label: 'Done', field: 'done', align: 'left' },
         {
-          name: "title",
+          name: 'title',
           required: true,
-          label: "Title",
-          align: "left",
+          label: 'Title',
+          align: 'left',
           field: row => row.name,
           format: val => `${val}`,
           sortable: true
         },
         {
-          name: "createdAt",
-          label: "Created",
-          field: "createdAt",
+          name: 'createdAt',
+          label: 'Created',
+          field: 'createdAt',
           sortable: true,
-          style: "width: 10px"
+          style: 'width: 10px'
         },
         {
-          name: "updatedAt",
-          label: "Updated",
-          field: "updatedAt",
+          name: 'updatedAt',
+          label: 'Updated',
+          field: 'updatedAt',
           sortable: true
         },
-        { name: "delete", label: "Delete", field: "delete" }
+        { name: 'delete', label: 'Delete', field: 'delete' }
       ]
-    };
+    }
   },
   methods: {
+    async fectchUsersSearch(filter) {
+      const res = await UserRequests.getAllUsers('', '', '', '', filter)
+      this.userList = res.data
+    },
+    async inviteUser(userId) {
+      const res = await TodoListRequests.addMember(
+        this.$route.params.id,
+        userId
+      )
+    },
+    async removeMember(userId) {
+      const res = await TodoListRequests.removeMember(
+        this.$route.params.id,
+        userId
+      )
+    },
     async onRequest(props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      const filter = props.filter;
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const filter = props.filter
 
-      this.loading = true;
+      this.loading = true
 
-      // get all rows if "All" (0) is selected
       const fetchCount =
-        rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage;
+        rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
 
-      // calculate starting row of data
-      const startRow = (page - 1) * rowsPerPage;
+      const startRow = (page - 1) * rowsPerPage
 
-      // fetch data from server
       const fetchResult = await this.fetchFromServer(
         descending,
         page,
         fetchCount,
         sortBy,
         filter
-      );
+      )
 
-      // update rowsCount with appropriate value
-      this.pagination.rowsNumber = fetchResult.count;
+      this.pagination.rowsNumber = fetchResult.count
 
-      const returnedData = fetchResult.data;
+      const returnedData = fetchResult.data
 
-      // clear out existing data and add new
-      this.todos.splice(0, this.todos.length, ...returnedData);
+      this.todos.splice(0, this.todos.length, ...returnedData)
 
-      this.pagination.page = page;
-      this.pagination.rowsPerPage = rowsPerPage;
-      this.pagination.sortBy = sortBy;
-      this.pagination.descending = descending;
+      this.pagination.page = page
+      this.pagination.rowsPerPage = rowsPerPage
+      this.pagination.sortBy = sortBy
+      this.pagination.descending = descending
 
-      this.loading = false;
+      this.loading = false
     },
 
     async fetchFromServer(order, page, limit, sortBy, filter) {
-      let skip = 0;
-      skip = (page - 1) * limit;
+      let skip = 0
+      skip = (page - 1) * limit
 
       return await TodoListRequests.getTodoListTodos(
         this.$route.params.id,
@@ -213,77 +269,75 @@ export default {
         limit,
         sortBy,
         filter
-      );
+      )
     },
 
     async addMember() {
-        await UserRequests.addMember(this.newMember)
-        this.newMember = ""
-        this.$refs.addMember.blur();
-        this.$refs.addMember.resetValidation();
+      await UserRequests.addMember(this.newMember)
+      this.newMember = ''
+      this.$refs.addMember.blur()
+      this.$refs.addMember.resetValidation()
     },
 
     async deleteTodo(id) {
-      await TodoRequests.deleteTodo(id);
+      await TodoRequests.deleteTodo(id)
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
-      });
+      })
     },
     async updateTodo(id, val) {
       let editedTodo = {
         title: val
-      };
-      await TodoRequests.editTodo(editedTodo, id);
+      }
+      await TodoRequests.editTodo(editedTodo, id)
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
-      });
-      return true;
+      })
+      return true
     },
     async doneTodo(id, val) {
       let editedTodo = {
         done: val
-      };
-      await TodoRequests.doneTodo(editedTodo, id);
+      }
+      await TodoRequests.doneTodo(editedTodo, id)
 
       await this.onRequest({
         pagination: this.pagination,
         filter: this.filter
-      });
+      })
     },
     async submitTodo() {
-      let validated = await this.createRules(this.newTitle);
+      let validated = await this.createRules(this.newTitle)
 
       if (validated) {
         let todo = {
           title: this.newTitle,
           listId: this.$route.params.id
-        };
-        console.log(todo);
-        await TodoRequests.createTodo(todo);
-        this.newTitle = "";
-        this.$refs.addInput.blur();
-        this.$refs.addInput.resetValidation();
+        }
+        await TodoRequests.createTodo(todo)
+        this.newTitle = ''
+        this.$refs.addInput.blur()
+        this.$refs.addInput.resetValidation()
 
         await this.onRequest({
           pagination: this.pagination,
           filter: this.filter
-        });
+        })
       }
     },
     async createRules(val) {
       return new Promise((resolve, reject) => {
-        resolve(!!val || "Please type something");
-      });
+        resolve(!!val || 'Please type something')
+      })
     }
   },
   mounted() {
-    // get initial data from server (1st page)
     this.onRequest({
       pagination: this.pagination,
       filter: this.filter
-    });
+    })
   }
-};
+}
 </script>

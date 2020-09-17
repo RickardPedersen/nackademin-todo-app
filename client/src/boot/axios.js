@@ -2,3 +2,8 @@ import Vue from 'vue'
 import axios from 'axios'
 
 Vue.prototype.$axios = axios
+
+import Plugin from '@quasar/quasar-ui-qmarkdown'
+import '@quasar/quasar-ui-qmarkdown/dist/index.css'
+
+Vue.use(Plugin)

@@ -1,9 +1,12 @@
 import axios from 'axios'
+import Store from './store'
+const store = Store()
+const token = store.getters.auth.userToken || localStorage.getItem('userToken')
 
 const url = '/api/users'
 
 const config = {
-    headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` }
+    headers: { Authorization: `Bearer ${token}` }
 }
 
 class TodoRequests {
@@ -13,7 +16,7 @@ class TodoRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return error
         }
     }
@@ -24,7 +27,7 @@ class TodoRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return error
         }
     }
@@ -35,7 +38,7 @@ class TodoRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return error
         }
     }
@@ -46,7 +49,7 @@ class TodoRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return false
         }
     }
@@ -57,7 +60,7 @@ class TodoRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return false
         }
     }
@@ -68,17 +71,7 @@ class TodoRequests {
             const data = res.data
             return data
         } catch (error) {
-            console.log(error)
-            return false
-        }
-    }
-
-    static async addMember(listId, username) {
-        try {
-            const user = this.getUser()
-            
-        } catch (error) {
-            console.log(error)
+            console.error(error)
             return false
         }
     }

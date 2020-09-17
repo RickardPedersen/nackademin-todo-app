@@ -59,6 +59,14 @@ const routes = [
         meta: {
           middleware: [user]
         }
+      },
+      {
+        path: "cookie-policy",
+        component: () => import("pages/Cookie-Policy.vue"),
+      },
+      {
+        path: "privacy-policy",
+        component: () => import("pages/Privacy-Policy.vue"),
       }
     ]
   },
