@@ -1,11 +1,21 @@
 <template>
-    <div class="q-pa-xl">
-        <q-markdown :src="markdown"></q-markdown>
-        <div>
-        <q-btn class="q-ma-sm" color="positive" label="Accept Cookies" @click="cookieAccept" />
-        <q-btn class="q-ma-sm" color="negative" label="Decline Cookies" @click="cookieDecline" />
-      </div>
+  <div class="q-pa-xl">
+    <q-markdown :src="markdown"></q-markdown>
+    <div>
+      <q-btn
+        class="q-ma-sm"
+        color="positive"
+        label="Accept Cookies"
+        @click="cookieAccept"
+      />
+      <q-btn
+        class="q-ma-sm"
+        color="negative"
+        label="Decline Cookies"
+        @click="cookieDecline"
+      />
     </div>
+  </div>
 </template>
 
 <script>
@@ -13,11 +23,11 @@ import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import markdown from '../assets/cookie-policy.md'
 
 export default {
-	data() {
-		return {
-			markdown
-		}
-	},
+  data() {
+    return {
+      markdown
+    }
+  },
   components: {
     QMarkdown
   },

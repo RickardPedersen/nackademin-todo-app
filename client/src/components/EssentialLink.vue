@@ -1,15 +1,7 @@
 <template>
   <div>
-    <q-item
-      clickable
-      tag="a"
-      :to="link"
-      v-if="!adminLink"
-    >
-      <q-item-section
-        v-if="icon"
-        avatar
-      >
+    <q-item clickable tag="a" :to="link" v-if="!adminLink">
+      <q-item-section v-if="icon" avatar>
         <q-icon :name="icon" />
       </q-item-section>
 
@@ -27,10 +19,7 @@
       v-else
       v-show="$store.getters.auth.isAdmin"
     >
-      <q-item-section
-        v-if="icon"
-        avatar
-      >
+      <q-item-section v-if="icon" avatar>
         <q-icon :name="icon" />
       </q-item-section>
 
@@ -46,7 +35,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// this.$store.getters.auth.userToken
+
 export default {
   name: 'EssentialLink',
   data() {

@@ -12,8 +12,6 @@
 
           <q-card-section>
             <q-form @submit="login" class="q-px-sm q-pt-xl">
-
-              <!--clearable-->
               <q-input
                 square
                 v-model="username"
@@ -21,14 +19,15 @@
                 type="username"
                 label="Username"
                 lazy-rules
-                :rules="[ val => val && val.length > 0 || 'Please type something']"
+                :rules="[
+                  val => (val && val.length > 0) || 'Please type something'
+                ]"
               >
                 <template v-slot:prepend>
                   <q-icon name="person" />
                 </template>
               </q-input>
 
-              <!--clearable-->
               <q-input
                 square
                 v-model="password"
@@ -36,22 +35,37 @@
                 type="password"
                 label="Password"
                 lazy-rules
-                :rules="[ val => val && val.length > 0 || 'Please type something']"
+                :rules="[
+                  val => (val && val.length > 0) || 'Please type something'
+                ]"
               >
                 <template v-slot:prepend>
                   <q-icon name="lock" />
                 </template>
               </q-input>
-            
-              <q-btn unelevated size="lg" color="blue-7" class="full-width text-white q-mt-lg" label="Log In" type="submit"  />
-            
+
+              <q-btn
+                unelevated
+                size="lg"
+                color="blue-7"
+                class="full-width text-white q-mt-lg"
+                label="Log In"
+                type="submit"
+              />
             </q-form>
           </q-card-section>
 
           <q-separator class="q-mb-sm" />
 
           <q-card-actions class="q-px-lg">
-            <q-btn unelevated size="lg" color="green-7" class="full-width text-white" label="Create New Account" @click="switchForm" />
+            <q-btn
+              unelevated
+              size="lg"
+              color="green-7"
+              class="full-width text-white"
+              label="Create New Account"
+              @click="switchForm"
+            />
           </q-card-actions>
         </q-card>
       </div>
@@ -66,7 +80,6 @@
 
           <q-card-section>
             <q-form @submit="createAccount" class="q-px-sm q-pt-xl">
-              <!--clearable-->
               <q-input
                 square
                 v-model="newUsername"
@@ -74,37 +87,53 @@
                 type="username"
                 label="Username"
                 lazy-rules
-                :rules="[ val => val && val.length > 0 || 'Please type something']"
+                :rules="[
+                  val => (val && val.length > 0) || 'Please type something'
+                ]"
               >
                 <template v-slot:prepend>
                   <q-icon name="person" />
                 </template>
               </q-input>
 
-              <!--clearable-->
               <q-input
                 square
-                
                 v-model="newPassword"
                 ref="newPassword"
                 type="password"
                 label="Password"
                 lazy-rules
-                :rules="[ val => val && val.length > 0 || 'Please type something']"
+                :rules="[
+                  val => (val && val.length > 0) || 'Please type something'
+                ]"
               >
                 <template v-slot:prepend>
                   <q-icon name="lock" />
                 </template>
               </q-input>
 
-              <q-btn type="submit" unelevated size="lg" color="green-7" class="full-width text-white q-mt-lg" label="Sign Up"  />
+              <q-btn
+                type="submit"
+                unelevated
+                size="lg"
+                color="green-7"
+                class="full-width text-white q-mt-lg"
+                label="Sign Up"
+              />
             </q-form>
           </q-card-section>
 
           <q-separator class="q-mb-sm" />
 
           <q-card-actions class="q-px-lg">
-            <q-btn unelevated size="lg" color="blue-7" class="full-width text-white" label="Back To Log In" @click="switchForm" />
+            <q-btn
+              unelevated
+              size="lg"
+              color="blue-7"
+              class="full-width text-white"
+              label="Back To Log In"
+              @click="switchForm"
+            />
           </q-card-actions>
         </q-card>
       </div>
@@ -126,8 +155,7 @@ export default {
       loginCard: true
     }
   },
-  components: {
-  },
+  components: {},
   methods: {
     async login() {
       const postData = {
@@ -139,7 +167,7 @@ export default {
         if (localStorage.getItem('cookiePolicyAccepted') === 'true') {
           localStorage.setItem('userToken', res.data)
         }
-        this.$store.dispatch('token', {token: res.data})
+        this.$store.dispatch('token', { token: res.data })
         this.$router.push('/todo-list')
       } catch (error) {
         console.error(error)
@@ -184,6 +212,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
