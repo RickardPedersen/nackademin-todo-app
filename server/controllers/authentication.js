@@ -3,7 +3,6 @@ const userModel = require('../models/user')
 module.exports = {
     authenticateUser: async (req, res) => {
         try {
-            return res.status(200)
             const userObject = await userModel.authenticateUser(req.body.username, req.body.password)
 
             if (userObject.success) {

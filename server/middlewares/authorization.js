@@ -8,7 +8,7 @@ module.exports = {
         }
     
         const token = req.headers.authorization.replace("Bearer ", "")
-        if (token === 'null') { return res.sendStatus(401) }
+        if (token === 'null') { return res.status(401).send('Denna funkar ju???') }
     
         try {
             req.user = await verifyToken(token)
