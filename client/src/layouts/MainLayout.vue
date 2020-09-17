@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title>
-          Todo App
+          <q-btn flat size="xl" label="Todo App" to="/" />
         </q-toolbar-title>
         <q-btn v-show="showLogOutButton" @click="logout" color="negative">Log Out</q-btn>
       </q-toolbar>
@@ -43,6 +43,10 @@
 
     <q-page-container>
       <router-view />
+      <div class="flex flex-center">
+        <q-btn class="q-ma-sm" color="primary" label="Cookie Policy" to="/cookie-policy" />
+        <q-btn class="q-ma-sm" color="primary" label="Privacy Policy" to="/privacy-policy" />
+      </div>
     </q-page-container>
   </q-layout>
 </template>
