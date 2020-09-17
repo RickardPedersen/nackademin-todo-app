@@ -6,58 +6,52 @@
       :columns="columns"
       row-key="_id"
       binary-state-sort
-      
-      
-			:pagination.sync="pagination"
-			:loading="loading"
-			:filter="filter"
-			@request="onRequest"
+      :pagination.sync="pagination"
+      :loading="loading"
+      :filter="filter"
+      @request="onRequest"
     >
-		<template v-slot:top-right>
-        <q-input  dense debounce="300" v-model="filter" placeholder="Search">
+      <template v-slot:top-right>
+        <q-input dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-    </template>
+      </template>
 
-    <template v-slot:top-left>
-      <div class="q-table__title">Users</div>
-      <q-form @submit="addUser">
-				<h5 class="q-mb-sm">Add User</h5>
-        <q-input
-        	ref="addUsername"
-					dense
-					outlined
-          debounce="300"
-          v-model="addUsername"
-          label="Username"
-          lazy-rules="ondemand"
-          :rules="[ createRules ]"
-        />
+      <template v-slot:top-left>
+        <div class="q-table__title">Users</div>
+        <q-form @submit="addUser">
+          <h5 class="q-mb-sm">Add User</h5>
+          <q-input
+            ref="addUsername"
+            dense
+            outlined
+            debounce="300"
+            v-model="addUsername"
+            label="Username"
+            lazy-rules="ondemand"
+            :rules="[createRules]"
+          />
 
-				<q-input
-        	ref="addPassword"
-					dense
-					outlined
-          debounce="300"
-          v-model="addPassword"
-          label="Password"
-          lazy-rules="ondemand"
-          :rules="[ createRules ]"
-        />
+          <q-input
+            ref="addPassword"
+            dense
+            outlined
+            debounce="300"
+            v-model="addPassword"
+            label="Password"
+            lazy-rules="ondemand"
+            :rules="[createRules]"
+          />
 
-            <q-btn dense type="submit" >Add user</q-btn>
-      </q-form>
-    </template>
+          <q-btn dense type="submit">Add user</q-btn>
+        </q-form>
+      </template>
 
-    <template v-slot:header="props">
+      <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-          >
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">
             {{ col.label }}
           </q-th>
         </q-tr>
@@ -65,8 +59,8 @@
 
       <template v-slot:body="props">
         <q-tr :props="props">
-        	<q-td>
-						<q-btn :to="'/user/' + props.row._id">Todos</q-btn>
+          <q-td>
+            <q-btn :to="'/user/' + props.row._id">Todos</q-btn>
           </q-td>
 
           <q-td key="username" :props="props">
@@ -81,7 +75,7 @@
             </q-popup-edit>
           </q-td>
 
-					<q-td key="password" :props="props">
+          <q-td key="password" :props="props">
             Change Password
             <q-popup-edit
               v-model="newPassword"
@@ -89,12 +83,17 @@
               buttons
               @save="changePassword(props.row._id, newPassword)"
             >
-              <q-input type="password" v-model="newPassword" dense autofocus counter />
+              <q-input
+                type="password"
+                v-model="newPassword"
+                dense
+                autofocus
+                counter
+              />
             </q-popup-edit>
           </q-td>
 
-
-					<q-td key="role" :props="props">
+          <q-td key="role" :props="props">
             {{ props.row.role }}
             <q-popup-edit
               v-model="props.row.role"
@@ -107,7 +106,9 @@
           </q-td>
 
           <q-td key="createdAt" :props="props">
-            <div class="text-pre-wrap">{{ new Date(props.row.createdAt).toLocaleTimeString() }}</div>
+            <div class="text-pre-wrap">
+              {{ new Date(props.row.createdAt).toLocaleTimeString() }}
+            </div>
           </q-td>
 
           <q-td key="updatedAt" :props="props">
@@ -115,7 +116,12 @@
           </q-td>
 
           <q-td key="delete" :props="props">
-            <q-btn round color="negative" icon="delete" @click="deleteTodo(props.row._id)" />
+            <q-btn
+              round
+              color="negative"
+              icon="delete"
+              @click="deleteTodo(props.row._id)"
+            />
           </q-td>
         </q-tr>
       </template>
@@ -127,13 +133,13 @@
 import UserRequests from '../UserRequests'
 
 export default {
-  data () {
+  data() {
     return {
-			addUsername: '',
-			addPassword: '',
-			newPassword: '',
+      addUsername: '',
+      addPassword: '',
+      newPassword: '',
       newTitle: '',
-			filter: '',
+      filter: '',
       loading: false,
       pagination: {
         sortBy: 'desc',
@@ -142,10 +148,15 @@ export default {
         rowsPerPage: 5,
         rowsNumber: 0
       },
-		users: [],
-    	selected: [],
+      users: [],
+      selected: [],
       columns: [
-        { name: 'seeTodos', label: 'See todos', field: 'seeTodos', align: 'left' },
+        {
+          name: 'seeTodos',
+          label: 'See todos',
+          field: 'seeTodos',
+          align: 'left'
+        },
         {
           name: 'username',
           required: true,
@@ -154,16 +165,16 @@ export default {
           field: row => row.name,
           format: val => `${val}`,
           sortable: true
-				},
-				{
+        },
+        {
           name: 'password',
           required: true,
           label: 'Password',
           align: 'left',
           field: row => row.name,
           format: val => `${val}`
-				},
-				{
+        },
+        {
           name: 'role',
           required: true,
           label: 'Role',
@@ -171,35 +182,47 @@ export default {
           field: row => row.name,
           format: val => `${val}`
         },
-        { name: 'createdAt', label: 'CreatedAt', field: 'createdAt', sortable: true, style: 'width: 10px' },
-        { name: 'updatedAt', label: 'UpdatedAt', field: 'updatedAt', sortable: true, },
+        {
+          name: 'createdAt',
+          label: 'CreatedAt',
+          field: 'createdAt',
+          sortable: true,
+          style: 'width: 10px'
+        },
+        {
+          name: 'updatedAt',
+          label: 'UpdatedAt',
+          field: 'updatedAt',
+          sortable: true
+        },
         { name: 'delete', label: 'Delete', field: 'delete' }
       ]
     }
   },
   methods: {
-		async onRequest (props) {
+    async onRequest(props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
-			const filter = props.filter
+      const filter = props.filter
 
       this.loading = true
 
-      // get all rows if "All" (0) is selected
-      const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
+      const fetchCount =
+        rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
 
-      // calculate starting row of data
       const startRow = (page - 1) * rowsPerPage
 
-      // fetch data from server
+      const fetchResult = await this.fetchFromServer(
+        descending,
+        page,
+        fetchCount,
+        sortBy,
+        filter
+      )
 
-      const fetchResult = await this.fetchFromServer(descending, page, fetchCount, sortBy, filter)
-
-      // update rowsCount with appropriate value
       this.pagination.rowsNumber = fetchResult.count
 
       const returnedData = fetchResult.data
 
-      // clear out existing data and add new
       this.users.splice(0, this.users.length, ...returnedData)
 
       this.pagination.page = page
@@ -208,10 +231,10 @@ export default {
       this.pagination.descending = descending
 
       this.loading = false
-		},
+    },
 
-    async fetchFromServer (order, page, limit, sortBy, filter) {
-			let skip = 0
+    async fetchFromServer(order, page, limit, sortBy, filter) {
+      let skip = 0
       skip = (page - 1) * limit
 
       return await UserRequests.getAllUsers(order, skip, limit, sortBy, filter)
@@ -233,9 +256,9 @@ export default {
         filter: this.filter
       })
       return true
-		},
-		async updateRole (id, val) {
-			let editedRole = {
+    },
+    async updateRole(id, val) {
+      let editedRole = {
         role: val
       }
       await UserRequests.editUser(editedRole, id)
@@ -244,9 +267,9 @@ export default {
         filter: this.filter
       })
       return true
-		},
-		async changePassword (id, val) {
-			let editedPassword = {
+    },
+    async changePassword(id, val) {
+      let editedPassword = {
         password: val
       }
       await UserRequests.editUser(editedPassword, id)
@@ -255,23 +278,23 @@ export default {
         filter: this.filter
       })
       return true
-		},
+    },
     async addUser() {
       let validated = await this.createRules(this.newTitle)
 
       if (validated) {
         let user = {
-					username: this.addUsername,
-					password: this.addPassword
+          username: this.addUsername,
+          password: this.addPassword
         }
 
         await UserRequests.createUser(user)
         this.addUsername = ''
-				this.addPassword = ''
-				
+        this.addPassword = ''
+
         this.$refs.addUsername.blur()
-				this.$refs.addPassword.blur()
-				
+        this.$refs.addPassword.blur()
+
         this.$refs.addUsername.resetValidation()
         this.$refs.addPassword.resetValidation()
 
@@ -286,9 +309,8 @@ export default {
         resolve(!!val || 'Please type something')
       })
     }
-	},
-	mounted () {
-    // get initial data from server (1st page)
+  },
+  mounted() {
     this.onRequest({
       pagination: this.pagination,
       filter: this.filter

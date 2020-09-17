@@ -15,7 +15,9 @@
         <q-toolbar-title>
           <q-btn flat size="xl" label="Todo App" to="/" />
         </q-toolbar-title>
-        <q-btn v-show="showLogOutButton" @click="logout" color="negative">Log Out</q-btn>
+        <q-btn v-show="showLogOutButton" @click="logout" color="negative"
+          >Log Out</q-btn
+        >
       </q-toolbar>
     </q-header>
 
@@ -27,11 +29,7 @@
       content-class="bg-grey-1"
     >
       <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          <!--Essential Links-->
+        <q-item-label header class="text-grey-8">
         </q-item-label>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -44,8 +42,18 @@
     <q-page-container>
       <router-view />
       <div class="flex flex-center">
-        <q-btn class="q-ma-sm" color="primary" label="Cookie Policy" to="/cookie-policy" />
-        <q-btn class="q-ma-sm" color="primary" label="Privacy Policy" to="/privacy-policy" />
+        <q-btn
+          class="q-ma-sm"
+          color="primary"
+          label="Cookie Policy"
+          to="/cookie-policy"
+        />
+        <q-btn
+          class="q-ma-sm"
+          color="primary"
+          label="Privacy Policy"
+          to="/privacy-policy"
+        />
       </div>
     </q-page-container>
   </q-layout>
@@ -66,7 +74,7 @@ const linksData = [
     title: 'Todo Lists',
     caption: '',
     icon: '',
-    link: '/todo-list',
+    link: '/todo-list'
   },
   {
     title: 'User List',
@@ -86,7 +94,7 @@ const linksData = [
 export default {
   name: 'MainLayout',
   components: { EssentialLink },
-  data () {
+  data() {
     return {
       leftDrawerOpen: false,
       essentialLinks: linksData,
@@ -100,9 +108,10 @@ export default {
       this.$store.dispatch('logout')
       location.reload(true)
     },
-    showNotif () {
+    showNotif() {
       this.$q.notify({
-        message: 'We use cookies and local storage to improve the functionality on our website and ensure that our services work the way they should.',
+        message:
+          'We use cookies and local storage to improve the functionality on our website and ensure that our services work the way they should.',
         color: 'primary',
         multiLine: true,
         timeout: 0,
@@ -110,9 +119,9 @@ export default {
           {
             label: 'Accept',
             color: 'white',
-            handler: () => { 
+            handler: () => {
               localStorage.setItem('cookiePolicyAccepted', true)
-            } 
+            }
           },
           {
             label: 'Read More',
@@ -121,13 +130,13 @@ export default {
               this.$router.push('/cookie-policy')
             }
           },
-          { 
+          {
             label: 'Decline',
             color: 'white',
             handler: () => {
               localStorage.removeItem('cookiePolicyAccepted')
             }
-          },
+          }
         ]
       })
     }
@@ -145,7 +154,6 @@ export default {
   beforeUpdate() {
     this.showLogOutButton = this.auth.loggedIn
     this.showMenu = this.auth.loggedIn
-    //this.leftDrawerOpen = this.auth.loggedIn
   }
 }
 </script>
