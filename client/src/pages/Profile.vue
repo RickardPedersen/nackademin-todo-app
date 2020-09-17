@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <h3>Username: {{username}}</h3>
-		<q-btn>
+		<q-btn color="info" class="q-ma-sm" style="width: 200px;">
       Change Username
       <q-popup-edit
         title="Change username"
@@ -13,7 +13,7 @@
       </q-popup-edit>
     </q-btn>
 		<br>
-		<q-btn>
+		<q-btn color="info" class="q-ma-sm" style="width: 200px;">
       Change password
       <q-popup-edit
         title="Change password"
@@ -23,6 +23,10 @@
       >
         <q-input ref="newPassword" type="password" v-model="newPassword" dense autofocus counter />
       </q-popup-edit>
+    </q-btn>
+    <br>
+    <q-btn color="negative" class="q-ma-sm" style="width: 200px;" @click="deleteAccount">
+      Delete Account
     </q-btn>
     <h5>role: {{role}}</h5>
     <h5>Created At: {{createdAt}}</h5>
@@ -55,6 +59,12 @@ export default {
 
   },
   methods: {
+    async deleteAccount() {
+      await UserRequests.deleteUser(this.userId)
+      localStorage.removeItem('userToken')
+      this.$store.dispatch('logout')
+      location.reload(true)
+    },
       async getUser() {
           const user = await UserRequests.getUser(this.userId)
           this.username = user.username
