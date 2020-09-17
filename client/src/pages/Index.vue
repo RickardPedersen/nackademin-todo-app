@@ -136,9 +136,11 @@ export default {
       }
       try {
         let res = await axios.post('/api/authentication/login', postData)
-        localStorage.setItem('userToken', res.data)
-        location.reload(true)
-        //this.$router.push('/todos')
+        if (localStorage.getItem('cookiePolicyAccepted') === 'true') {
+          localStorage.setItem('userToken', res.data)
+        }
+        this.$store.dispatch('token', {token: res.data})
+        this.$router.push('/todos')
       } catch (error) {
         console.error(error)
       }

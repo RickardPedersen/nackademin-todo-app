@@ -97,14 +97,48 @@ export default {
   methods: {
     logout() {
       localStorage.removeItem('userToken')
-      //this.$router.go('/')
+      this.$store.dispatch('logout')
       location.reload(true)
+    },
+    showNotif () {
+      this.$q.notify({
+        message: 'We use cookies and local storage to improve the functionality on our website and ensure that our services work the way they should.',
+        color: 'primary',
+        multiLine: true,
+        timeout: 0,
+        actions: [
+          {
+            label: 'Accept',
+            color: 'white',
+            handler: () => { 
+              localStorage.setItem('cookiePolicyAccepted', true)
+            } 
+          },
+          {
+            label: 'Read More',
+            color: 'white',
+            handler: () => {
+              this.$router.push('/cookie-policy')
+            }
+          },
+          { 
+            label: 'Decline',
+            color: 'white',
+            handler: () => {
+              localStorage.removeItem('cookiePolicyAccepted')
+            }
+          },
+        ]
+      })
     }
   },
   computed: {
     ...mapGetters(['auth'])
   },
   created() {
+    if (localStorage.getItem('cookiePolicyAccepted') !== 'true') {
+      this.showNotif()
+    }
     this.showLogOutButton = this.auth.loggedIn
     this.showMenu = this.auth.loggedIn
   },

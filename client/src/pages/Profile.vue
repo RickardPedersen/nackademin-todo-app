@@ -61,7 +61,6 @@ export default {
           this.createdAt = user.createdAt
           this.updatedAt = user.updatedAt
           this.role = user.role
-          console.log(user)
 			},
 			async changePassword (val) {
 			let editedPassword = {

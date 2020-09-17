@@ -1,18 +1,5 @@
 <template>
   <div class="q-pa-md">
-    <!--
-    <q-btn>
-      Edit Username
-      <q-popup-edit
-        title="Update Title"
-        buttons
-        @save="console.log('Save username')"
-      >
-        <q-input dense autofocus counter />
-      </q-popup-edit>
-    </q-btn>
-    -->
-
     <q-table
       title="Todos"
       :data="todos"
@@ -259,8 +246,7 @@ export default {
         let todo = {
           title: this.newTitle,
           listId: this.$route.params.id
-        };
-        console.log(todo);
+        }
         await TodoRequests.createTodo(todo);
         this.newTitle = "";
         this.$refs.addInput.blur();
