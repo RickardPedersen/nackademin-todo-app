@@ -75,16 +75,6 @@ class TodoRequests {
             return false
         }
     }
-
-    static async addMember(listId, username) {
-        try {
-            const user = this.getUser()
-            
-        } catch (error) {
-            console.error(error)
-            return false
-        }
-    }
 }
 
 export default TodoRequests

@@ -11,6 +11,32 @@ const config = {
 }
 
 class TodoListRequests {
+    static async addMember(listId, userId) {
+        try {
+            const body = {
+                addMember: userId
+            }
+            const res = await axios.patch(`${url}/${listId}`, body, config)
+            return res.data
+        } catch (error) {
+            console.error(error)
+            return false
+        }
+    }
+
+    static async removeMember(listId, userId) {
+        try {
+            const body = {
+                removeMember: userId
+            }
+            const res = await axios.patch(`${url}/${listId}`, body, config)
+            return res.data
+        } catch (error) {
+            console.error(error)
+            return false
+        }
+    }
+
     static async getTodoListTodos(listId, descending, skip, limit, sortBy, filter) {
         try {
             const res = await axios.get(`${url}/${listId}/todos?descending=${descending}&skip=${skip}&limit=${limit}&sortBy=${sortBy}&filter=${filter}`, config)

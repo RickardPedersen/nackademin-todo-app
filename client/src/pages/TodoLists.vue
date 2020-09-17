@@ -33,18 +33,38 @@
             <q-btn dense flat icon="add" type="submit" />
           </q-input>
         </q-form>
-        <q-form @submit="addMember">
-          <q-input
-            ref="addMember"
-            debounce="300"
-            v-model="newMember"
-            label="Add member"
-            lazy-rules="ondemand"
-            :rules="[createRules]"
-          >
-            <q-btn dense flat icon="add" type="submit" />
+
+        <q-btn-dropdown class="float-right q-mb-sm" color="info" icon="add" label="Invite member" style="width:200px">
+          <q-input v-on:input="fectchUsersSearch(searchUser)" label="Invite to group" v-model="searchUser" class="bg-white" style="width:200px">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
           </q-input>
-        </q-form>
+          <q-list>
+            <q-item v-for="(user, i) in userList" :key="i" clickable v-close-popup @click="inviteUser(user._id)">
+              <q-item-section>
+                <q-item-label>{{user.username}}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+
+        <br>
+
+        <q-btn-dropdown class="float-right" color="red" icon="delete" label="Remove member" style="width:200px">
+          <q-input v-on:input="fectchUsersSearch(searchUser)" label="Remove member" v-model="searchUser" class="bg-white" style="width:200px">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+          <q-list>
+            <q-item v-for="(user, i) in userList" :key="i" clickable v-close-popup @click="removeMember(user._id)">
+              <q-item-section>
+                <q-item-label>{{user.username}}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </template>
 
       <template v-slot:header="props">
@@ -108,6 +128,8 @@ import UserRequests from "../UserRequests"
 export default {
   data() {
     return {
+      userList: [],
+      searchUser: "",
       testar: "asdasdas",
       newTitle: "",
       newMember: "",
@@ -151,6 +173,19 @@ export default {
     };
   },
   methods: {
+    async fectchUsersSearch(filter) {
+      const res = await UserRequests.getAllUsers('', '', '', '', filter)
+      this.userList = res.data
+      console.log(this.userList)
+    },
+    async inviteUser(userId) {
+      const res = await TodoListRequests.addMember(this.$route.params.id, userId)
+      console.log(res)
+    },
+    async removeMember(userId) {
+      const res = await TodoListRequests.removeMember(this.$route.params.id, userId)
+      console.log(res)
+    },
     async onRequest(props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination;
       const filter = props.filter;

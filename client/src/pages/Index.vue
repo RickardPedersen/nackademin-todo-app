@@ -140,7 +140,7 @@ export default {
           localStorage.setItem('userToken', res.data)
         }
         this.$store.dispatch('token', {token: res.data})
-        this.$router.push('/todos')
+        this.$router.push('/todo-list')
       } catch (error) {
         console.error(error)
       }
