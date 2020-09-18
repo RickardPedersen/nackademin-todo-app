@@ -4,7 +4,7 @@ const {user, admin} = require('../../middlewares/authorization')
 
 const router = new Router()
 
-router.get('/', admin, controller.getAllUsers)
+router.get('/', user, controller.getAllUsers)
 router.get('/:id', user, controller.getUser)
 router.get('/:id/todos', admin, controller.getUserTodos)
 router.post('/', controller.addUser)
